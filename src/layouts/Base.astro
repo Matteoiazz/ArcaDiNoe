@@ -1,0 +1,499 @@
+---
+import '../styles/global.css';
+import Arca from '../components/Arca.astro';
+import Icona from '../components/Icona.astro';
+import { locale, indirizzoCompleto, mapsLink } from '../data/locale';
+import { orarioGiorno } from '../lib/orari';
+
+interface Props {
+  titolo?: string;
+  descrizione?: string;
+  /** Nasconde la barra azioni su mobile (es. nella pagina Prenota, dove l'azione è il modulo). */
+  senzaBarra?: boolean;
+}
+
+const {
+  titolo,
+  descrizione = `${locale.nome}: pizzeria con forno a legna, ristorante e griglieria a Trenta, Casali del Manco (Cosenza). Vista panoramica su Cosenza, giardino, veranda e ampio parcheggio. Prenota un tavolo.`,
+  senzaBarra = false,
+} = Astro.props;
+
+const titoloPagina = titolo ? `${titolo} · ${locale.nome}` : `${locale.nome} · Pizzeria e Ristorante a Casali del Manco (CS)`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og.jpg', Astro.site);
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+
+const voci = [
+  { href: '/menu', testo: 'Menu' },
+  { href: '/eventi', testo: 'Eventi' },
+  { href: '/dove-siamo', testo: 'Dove siamo' },
+];
+
+const giorniSettimana = [1, 2, 3, 4, 5, 6, 0];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Restaurant',
+  name: locale.nome,
+  description: descrizione,
+  servesCuisine: ['Pizza', 'Calabrese', 'Italiana', 'Grigliata', 'Pesce'],
+  telephone: locale.telefonoLink,
+  url: Astro.site?.toString(),
+  image: ogImage.toString(),
+  priceRange: '€€',
+  acceptsReservations: true,
+  hasMenu: new URL('/menu', Astro.site).toString(),
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: locale.indirizzo.via,
+    addressLocality: `${locale.indirizzo.frazione}, ${locale.indirizzo.comune}`,
+    postalCode: locale.indirizzo.cap,
+    addressRegion: locale.indirizzo.provincia,
+    addressCountry: 'IT',
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: locale.geo.lat, longitude: locale.geo.lng },
+  amenityFeature: locale.servizi.map((s) => ({ '@type': 'LocationFeatureSpecification', name: s, value: true })),
+  openingHoursSpecification: locale.orari.flatMap((o) =>
+    o.fasce.map(([a, b]) => ({
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][o.giorno],
+      opens: `${String(Math.floor(a / 60)).padStart(2, '0')}:${String(a % 60).padStart(2, '0')}`,
+      closes: `${String(Math.floor((b % 1440) / 60)).padStart(2, '0')}:${String(b % 60).padStart(2, '0')}`,
+    })),
+  ),
+};
+---
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{titoloPagina}</title>
+    <meta name="description" content={descrizione} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#0e1828" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta property="og:type" content="restaurant" />
+    <meta property="og:locale" content="it_IT" />
+    <meta property="og:title" content={titoloPagina} />
+    <meta property="og:description" content={descrizione} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body class:list={[{ 'con-barra': !senzaBarra }]}>
+    <a class="salta" href="#contenuto">Vai al contenuto</a>
+
+    {locale.anteprima && (
+      <div class="anteprima" role="note">
+        Anteprima del sito: foto, prezzi e alcuni dati sono dimostrativi.
+      </div>
+    )}
+
+    <header class="testata">
+      <div class="contenitore testata-riga">
+        <a href="/" class="marchio" aria-label={`${locale.nome}, home`}>
+          <Arca class="marchio-arca" />
+          <span class="marchio-nome">L’Arca di Noè</span>
+        </a>
+
+        <nav class="nav" aria-label="Principale">
+          <ul>
+            {voci.map((v) => (
+              <li>
+                <a href={v.href} aria-current={path === v.href ? 'page' : undefined}>{v.testo}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div class="testata-azioni">
+          <span class="stato" data-stato aria-live="polite">
+            <span class="stato-luce" aria-hidden="true"></span>
+            <span data-stato-testo>Orari</span>
+          </span>
+          <a class="btn btn-luce testata-prenota" href="/prenota">Prenota</a>
+        </div>
+      </div>
+    </header>
+
+    <main id="contenuto">
+      <slot />
+    </main>
+
+    <footer class="piede">
+      <div class="contenitore piede-griglia">
+        <div class="piede-marchio">
+          <Arca class="piede-arca" />
+          <p class="piede-nome">L’Arca di Noè</p>
+          <p class="piede-tipo">{locale.tipo}</p>
+          <p class="piede-indirizzo">
+            <a href={mapsLink} target="_blank" rel="noopener">{indirizzoCompleto}</a>
+          </p>
+        </div>
+
+        <div>
+          <h2 class="piede-titolo">Orari</h2>
+          <dl class="piede-orari">
+            {giorniSettimana.map((g) => (
+              <div data-giorno={g}>
+                <dt>{locale.orari.find((o) => o.giorno === g)!.nome}</dt>
+                <dd>{orarioGiorno(g)}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        <div>
+          <h2 class="piede-titolo">Contatti</h2>
+          <ul class="piede-lista">
+            <li><a href={`tel:${locale.telefonoLink}`}><Icona nome="telefono" /> {locale.telefono}</a></li>
+            <li><a href="/prenota"><Icona nome="calendario" /> Prenota un tavolo</a></li>
+            <li><a href="/eventi"><Icona nome="persone" /> Eventi e banchetti</a></li>
+            <li><a href="/dove-siamo"><Icona nome="pin" /> Come arrivare</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="contenitore piede-fondo">
+        <p>© {new Date().getFullYear()} {locale.nome}</p>
+        <p><a href="/privacy">Privacy</a> · <a href="/crediti">Crediti foto</a></p>
+      </div>
+    </footer>
+
+    {!senzaBarra && (
+      <nav class="barra" aria-label="Azioni rapide">
+        <a href={`tel:${locale.telefonoLink}`} class="barra-voce">
+          <Icona nome="telefono" />
+          <span>Chiama</span>
+        </a>
+        <a href="/menu" class="barra-voce">
+          <Icona nome="menu" />
+          <span>Menu</span>
+        </a>
+        <a href="/prenota" class="barra-voce barra-prenota">
+          <Icona nome="calendario" />
+          <span>Prenota</span>
+        </a>
+      </nav>
+    )}
+
+    <script>
+      import { stato, adessoRoma } from '../lib/orari';
+
+      function aggiorna() {
+        const s = stato();
+        document.querySelectorAll<HTMLElement>('[data-stato]').forEach((el) => {
+          el.dataset.aperto = String(s.aperto);
+          const t = el.querySelector('[data-stato-testo]');
+          if (t) t.textContent = el.hasAttribute('data-insegna') ? s.dettaglio : `${s.aperto ? 'Aperto' : 'Chiuso'} · ${s.dettaglio}`;
+        });
+        const oggi = adessoRoma().giorno;
+        document.querySelectorAll<HTMLElement>('[data-giorno]').forEach((el) => {
+          el.toggleAttribute('data-oggi', Number(el.dataset.giorno) === oggi);
+        });
+        document.dispatchEvent(new CustomEvent('stato', { detail: s }));
+      }
+      aggiorna();
+      setInterval(aggiorna, 60_000);
+    </script>
+  </body>
+</html>
+
+<style>
+  .salta {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 100;
+    background: var(--luce);
+    color: var(--notte-0);
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-weight: 700;
+  }
+  .salta:focus {
+    top: 1rem;
+  }
+
+  .anteprima {
+    background: var(--notte-0);
+    color: var(--carta-2);
+    font-size: 0.875rem;
+    text-align: center;
+    padding: 0.45rem var(--gutter);
+    border-bottom: 1px solid var(--notte-3);
+  }
+
+  .testata {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in oklab, var(--notte-1) 82%, transparent);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    border-bottom: 1px solid color-mix(in oklab, var(--notte-3) 70%, transparent);
+  }
+
+  .testata-riga {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    min-height: 68px;
+  }
+
+  .marchio {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: var(--carta);
+    flex: none;
+  }
+  .marchio-arca {
+    width: 38px;
+    height: auto;
+    color: var(--carta);
+  }
+  .marchio-nome {
+    font-family: var(--display);
+    font-weight: 800;
+    font-stretch: 78%;
+    font-size: 1.4rem;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  .nav {
+    margin-inline: auto;
+  }
+  .nav ul {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nav a {
+    display: block;
+    padding: 0.55rem 0.9rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-family: var(--display);
+    font-weight: 600;
+    font-stretch: 90%;
+    color: var(--carta-2);
+    transition: color 0.2s var(--ease), background-color 0.2s var(--ease);
+  }
+  .nav a:hover {
+    color: var(--carta);
+    background: var(--notte-2);
+  }
+  .nav a[aria-current='page'] {
+    color: var(--luce);
+  }
+
+  .testata-azioni {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  .testata-prenota {
+    --h: 44px;
+    padding-inline: 1.15em;
+    font-size: 1rem;
+  }
+
+  .stato {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--carta-2);
+    white-space: nowrap;
+  }
+  .stato-luce {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--carta-3);
+  }
+  .stato[data-aperto='true'] {
+    color: var(--carta);
+  }
+  .stato[data-aperto='true'] .stato-luce {
+    background: var(--giardino);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--giardino) 25%, transparent), 0 0 12px var(--giardino);
+  }
+
+  @media (max-width: 900px) {
+    .nav {
+      display: none;
+    }
+    .testata-azioni {
+      margin-left: auto;
+    }
+  }
+  @media (max-width: 560px) {
+    .testata-prenota {
+      display: none;
+    }
+    .marchio-nome {
+      font-size: 1.25rem;
+    }
+    .stato {
+      font-size: 0.8rem;
+    }
+    .stato [data-stato-testo] {
+      max-width: 15ch;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  /* ---------- Piede ---------- */
+  .piede {
+    background: var(--notte-0);
+    border-top: 1px solid var(--notte-3);
+    padding-top: clamp(56px, 8vw, 96px);
+  }
+  .piede-griglia {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr;
+    gap: 3rem;
+  }
+  .piede-arca {
+    width: 56px;
+    color: var(--carta);
+    margin-bottom: 1rem;
+  }
+  .piede-nome {
+    font-family: var(--display);
+    font-weight: 800;
+    font-stretch: 78%;
+    font-size: 2rem;
+    line-height: 1;
+  }
+  .piede-tipo {
+    color: var(--carta-2);
+    margin-top: 0.4rem;
+  }
+  .piede-indirizzo {
+    margin-top: 1.2rem;
+    color: var(--carta-2);
+    max-width: 30ch;
+  }
+  .piede-titolo {
+    font-size: 1.05rem;
+    font-stretch: 90%;
+    font-weight: 700;
+    color: var(--luce);
+    margin-bottom: 1rem;
+  }
+  .piede-orari {
+    margin: 0;
+    display: grid;
+    gap: 0.35rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .piede-orari div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--carta-2);
+  }
+  .piede-orari dd {
+    margin: 0;
+  }
+  .piede-orari div[data-oggi] {
+    color: var(--luce-forte);
+    font-weight: 700;
+  }
+  .piede-lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .piede-lista a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: var(--carta-2);
+    min-height: 32px;
+  }
+  .piede-lista a:hover {
+    color: var(--carta);
+  }
+  .piede-lista :global(svg) {
+    width: 20px;
+    color: var(--luce);
+  }
+  .piede-fondo {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+    margin-top: clamp(48px, 7vw, 80px);
+    padding-block: 1.5rem;
+    border-top: 1px solid var(--notte-3);
+    color: var(--carta-3);
+    font-size: 0.9rem;
+  }
+  @media (max-width: 800px) {
+    .piede-griglia {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+  }
+
+  /* ---------- Barra azioni mobile ---------- */
+  .barra {
+    display: none;
+  }
+  @media (max-width: 760px) {
+    body.con-barra {
+      padding-bottom: calc(76px + env(safe-area-inset-bottom));
+    }
+    .barra {
+      position: fixed;
+      inset: auto 0 0 0;
+      z-index: 60;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.35fr;
+      gap: 8px;
+      padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+      background: color-mix(in oklab, var(--notte-0) 88%, transparent);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--notte-3);
+    }
+    .barra-voce {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      min-height: 56px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-family: var(--display);
+      font-weight: 700;
+      font-stretch: 88%;
+      font-size: 1.05rem;
+      color: var(--carta);
+      background: var(--notte-2);
+    }
+    .barra-voce :global(svg) {
+      width: 20px;
+      height: 20px;
+    }
+    .barra-prenota {
+      background: var(--luce);
+      color: var(--notte-0);
+    }
+  }
+</style>

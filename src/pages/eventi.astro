@@ -1,0 +1,180 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Richiesta from '../components/Richiesta.astro';
+import Icona from '../components/Icona.astro';
+import { locale } from '../data/locale';
+import fotoTiramisu from '../assets/foto/tiramisu.jpg';
+
+const occasioni = [
+  { nome: 'Comunioni e cresime', testo: 'Il pranzo o la cena dopo la cerimonia, con il menu di festa e lo spazio per i più piccoli in giardino.' },
+  { nome: 'Battesimi', testo: 'Tavolate per le famiglie, con orari tranquilli e menu concordato.' },
+  { nome: 'Compleanni e lauree', testo: 'Dalla pizzata con gli amici alla cena con tutti i parenti. La torta la portate voi o la pensiamo insieme.' },
+  { nome: 'Cene aziendali', testo: 'Menu a prezzo fisso, sale riservate e parcheggio per tutti gli ospiti.' },
+  { nome: 'Serate di musica', testo: 'Musica dal vivo nelle serate in programma. Chiedi le prossime date.' },
+];
+
+const perche = [
+  { icona: 'persone', testo: 'Sale ampie e climatizzate' },
+  { icona: 'foglia', testo: 'Giardino e veranda per l’estate' },
+  { icona: 'auto', testo: 'Parcheggio privato per gli invitati' },
+  { icona: 'fuoco', testo: 'Pizza, cucina e griglia nello stesso menu' },
+] as const;
+---
+<Base titolo="Eventi e banchetti" descrizione="Comunioni, battesimi, compleanni, lauree e cene aziendali all’Arca di Noè a Trenta (CS): sale ampie, giardino, veranda, parcheggio privato e menu su misura.">
+  <header class="testa">
+    <div class="contenitore testa-griglia">
+      <div>
+        <h1 class="titolo">Le vostre feste, <em>con vista.</em></h1>
+        <p class="lead">
+          Sale ampie, giardino e veranda, parcheggio per tutti. Il menu lo costruiamo con voi: pizza, cucina calabrese,
+          griglia, o un po’ di tutto.
+        </p>
+        <ul class="perche">
+          {perche.map((p) => <li><Icona nome={p.icona} /> {p.testo}</li>)}
+        </ul>
+      </div>
+      <Image quality={70} class="testa-foto" src={fotoTiramisu} alt="Una fetta di tiramisù" widths={[400, 700]} sizes="(max-width: 900px) 0px, 30vw" />
+    </div>
+  </header>
+
+  <section class="sezione occasioni" aria-labelledby="t-occasioni">
+    <div class="contenitore">
+      <h2 id="t-occasioni" class="titolo-sezione">Per ogni occasione</h2>
+      <ol class="lista">
+        {occasioni.map((o) => (
+          <li>
+            <h3>{o.nome}</h3>
+            <p>{o.testo}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="sezione richiesta-sez" aria-labelledby="t-richiesta">
+    <div class="contenitore richiesta-griglia">
+      <div>
+        <h2 id="t-richiesta" class="titolo-sezione">Chiedi una <em>proposta.</em></h2>
+        <p class="lead">Raccontaci la festa: ti richiamiamo con disponibilità e menu.</p>
+        <p class="diretto">
+          Oppure chiama subito il <a href={`tel:${locale.telefonoLink}`}>{locale.telefono}</a>.
+        </p>
+      </div>
+      <Richiesta tipo="evento" />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .testa {
+    padding-block: clamp(48px, 8vw, 110px);
+    background:
+      radial-gradient(80% 120% at 100% 0%, rgba(244, 197, 106, 0.16), transparent 60%),
+      var(--notte-1);
+  }
+  .testa-griglia {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: clamp(2rem, 6vw, 6rem);
+    align-items: center;
+  }
+  .titolo {
+    font-size: clamp(3rem, 8.5vw, 6.5rem);
+    font-weight: 800;
+    font-stretch: 76%;
+    line-height: 0.9;
+    margin-bottom: 1.4rem;
+  }
+  .titolo em {
+    font-style: normal;
+    color: var(--luce);
+  }
+  .perche {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9rem 1.5rem;
+  }
+  .perche li {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+  .perche :global(svg) {
+    width: 24px;
+    flex: none;
+    color: var(--luce);
+  }
+  .testa-foto {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: var(--raggio);
+  }
+  @media (max-width: 900px) {
+    .testa-griglia {
+      grid-template-columns: 1fr;
+    }
+    .testa-foto {
+      display: none;
+    }
+  }
+  @media (max-width: 520px) {
+    .perche {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .occasioni {
+    background: var(--notte-0);
+  }
+  .lista {
+    list-style: none;
+    padding: 0;
+    margin: clamp(2rem, 4vw, 3rem) 0 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 clamp(2rem, 6vw, 6rem);
+  }
+  .lista li {
+    padding-block: 1.6rem;
+    border-top: 1px solid var(--notte-3);
+  }
+  .lista h3 {
+    font-size: clamp(1.6rem, 2.8vw, 2.1rem);
+    color: var(--luce);
+  }
+  .lista p {
+    margin-top: 0.5rem;
+    color: var(--carta-2);
+    max-width: 46ch;
+  }
+  @media (max-width: 760px) {
+    .lista {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .richiesta-griglia {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: clamp(2.5rem, 6vw, 6rem);
+    align-items: start;
+  }
+  .diretto {
+    margin-top: 1.4rem;
+    color: var(--carta-2);
+  }
+  .diretto a {
+    color: var(--luce);
+    font-weight: 700;
+  }
+  @media (max-width: 900px) {
+    .richiesta-griglia {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

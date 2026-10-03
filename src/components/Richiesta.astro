@@ -1,0 +1,444 @@
+---
+/**
+ * Modulo di richiesta: compone un messaggio per WhatsApp (se il numero è configurato)
+ * oppure prepara la chiamata. Nessun dato viene salvato o inviato a server.
+ */
+import Icona from './Icona.astro';
+import { locale } from '../data/locale';
+
+interface Props {
+  tipo: 'tavolo' | 'evento';
+}
+const { tipo } = Astro.props;
+const conWhatsapp = Boolean(locale.whatsapp);
+---
+<form class="richiesta" data-richiesta data-tipo={tipo} data-wa={locale.whatsapp} data-tel={locale.telefonoLink} novalidate>
+  <div class="griglia">
+    <div class="campo largo">
+      <label for={`nome-${tipo}`}>Nome e cognome</label>
+      <input id={`nome-${tipo}`} name="nome" autocomplete="name" required placeholder="Es. Maria Rossi" />
+      <p class="errore" data-errore="nome" hidden>Scrivi il nome per la prenotazione.</p>
+    </div>
+
+    {tipo === 'evento' && (
+      <div class="campo largo">
+        <label for="occasione">Che cosa festeggiate?</label>
+        <select id="occasione" name="occasione">
+          <option>Comunione o cresima</option>
+          <option>Battesimo</option>
+          <option>Compleanno</option>
+          <option>Laurea</option>
+          <option>Cena aziendale</option>
+          <option>Anniversario</option>
+          <option>Altro</option>
+        </select>
+      </div>
+    )}
+
+    <div class="campo">
+      <span class="etichetta" id={`persone-l-${tipo}`}>{tipo === 'tavolo' ? 'Persone' : 'Invitati (circa)'}</span>
+      <div class="contatore" role="group" aria-labelledby={`persone-l-${tipo}`}>
+        <button type="button" data-meno aria-label="Una persona in meno">−</button>
+        <input name="persone" inputmode="numeric" value={tipo === 'tavolo' ? '2' : '30'} aria-labelledby={`persone-l-${tipo}`} data-min="1" data-max={tipo === 'tavolo' ? '40' : '400'} data-passo={tipo === 'tavolo' ? '1' : '5'} />
+        <button type="button" data-piu aria-label="Una persona in più">+</button>
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for={`data-${tipo}`}>Giorno</label>
+      <input id={`data-${tipo}`} type="date" name="data" required data-data />
+      <p class="errore" data-errore="data" hidden></p>
+    </div>
+
+    {tipo === 'tavolo' ? (
+      <div class="campo">
+        <label for="ora">Orario</label>
+        <select id="ora" name="ora" required data-ora disabled>
+          <option value="">Scegli prima il giorno</option>
+        </select>
+        <p class="errore" data-errore="ora" hidden>Scegli un orario.</p>
+      </div>
+    ) : (
+      <div class="campo">
+        <label for="momento">Pranzo o cena</label>
+        <select id="momento" name="momento">
+          <option>Cena</option>
+          <option>Pranzo (domenica)</option>
+          <option>Da definire</option>
+        </select>
+      </div>
+    )}
+
+    {tipo === 'tavolo' && (
+      <fieldset class="campo largo zona">
+        <legend class="etichetta">Dove preferite sedervi?</legend>
+        <div class="scelte">
+          {['Indifferente', 'In sala', 'In veranda', 'In giardino'].map((z, i) => (
+            <label class="scelta">
+              <input type="radio" name="zona" value={z} checked={i === 0} />
+              <span>{z}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+    )}
+
+    <div class="campo largo">
+      <label for={`note-${tipo}`}>Note <span class="facoltativo">(facoltativo)</span></label>
+      <textarea id={`note-${tipo}`} name="note" placeholder={tipo === 'tavolo' ? 'Allergie, seggiolone, una torta per un compleanno…' : 'Menu che avete in mente, musica, esigenze particolari…'}></textarea>
+    </div>
+  </div>
+
+  <div class="invio">
+    <button class="btn btn-luce" type="submit">
+      {conWhatsapp ? <><Icona nome="chat" /> Invia su WhatsApp</> : <><Icona nome="freccia" /> Prepara la richiesta</>}
+    </button>
+    <p class="invio-nota">
+      {conWhatsapp
+        ? 'Si apre WhatsApp con il messaggio già scritto: ti rispondiamo per confermare.'
+        : 'La prenotazione si conferma con una telefonata: ti prepariamo il riepilogo da leggere.'}
+    </p>
+  </div>
+
+  <div class="esito" data-esito hidden tabindex="-1">
+    <p class="esito-titolo" data-esito-titolo></p>
+    <pre class="esito-messaggio" data-esito-messaggio></pre>
+    <div class="esito-azioni">
+      <a class="btn btn-luce" href={`tel:${locale.telefonoLink}`}><Icona nome="telefono" /> Chiama {locale.telefono}</a>
+      <button class="btn btn-linea" type="button" data-copia><Icona nome="copia" /> <span>Copia il testo</span></button>
+    </div>
+  </div>
+</form>
+
+<script>
+  import { slotPrenotabili, adessoRoma } from '../lib/orari';
+  import { locale } from '../data/locale';
+
+  document.querySelectorAll<HTMLFormElement>('[data-richiesta]').forEach((form) => {
+    const tipo = form.dataset.tipo as 'tavolo' | 'evento';
+    const wa = form.dataset.wa;
+    const data = form.querySelector<HTMLInputElement>('[data-data]')!;
+    const ora = form.querySelector<HTMLSelectElement>('[data-ora]');
+    const persone = form.querySelector<HTMLInputElement>('input[name="persone"]')!;
+    const esito = form.querySelector<HTMLElement>('[data-esito]')!;
+
+    // Data minima: oggi (a Roma). Massima: tra un anno.
+    const oggi = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Rome' }).format(new Date());
+    data.min = oggi;
+    const max = new Date();
+    max.setFullYear(max.getFullYear() + 1);
+    data.max = max.toISOString().slice(0, 10);
+
+    // Contatore persone
+    const min = Number(persone.dataset.min), mx = Number(persone.dataset.max), passo = Number(persone.dataset.passo);
+    const imposta = (n: number) => (persone.value = String(Math.max(min, Math.min(mx, Math.round(n) || min))));
+    form.querySelector('[data-meno]')!.addEventListener('click', () => imposta(Number(persone.value) - passo));
+    form.querySelector('[data-piu]')!.addEventListener('click', () => imposta(Number(persone.value) + passo));
+    persone.addEventListener('change', () => imposta(Number(persone.value)));
+
+    const errore = (campo: string, msg: string | null) => {
+      const el = form.querySelector<HTMLElement>(`[data-errore="${campo}"]`);
+      const input = form.querySelector<HTMLElement>(`[name="${campo}"]`);
+      if (el) {
+        el.hidden = !msg;
+        if (msg) el.textContent = msg;
+      }
+      input?.setAttribute('aria-invalid', String(Boolean(msg)));
+    };
+
+    function giornoChiuso(iso: string) {
+      if (tipo === 'evento') return false;
+      return slotPrenotabili(iso).length === 0;
+    }
+
+    function aggiornaOrari() {
+      if (!ora) return;
+      const iso = data.value;
+      ora.innerHTML = '';
+      if (!iso) {
+        ora.disabled = true;
+        ora.append(new Option('Scegli prima il giorno', ''));
+        return;
+      }
+      let slot = slotPrenotabili(iso);
+      if (iso === oggi) {
+        const adesso = adessoRoma().minuti + 30;
+        slot = slot.filter((s) => {
+          const [h, m] = s.split(':').map(Number);
+          return h * 60 + m >= adesso;
+        });
+      }
+      if (!slot.length) {
+        ora.disabled = true;
+        ora.append(new Option(giornoChiuso(iso) ? 'Giorno di chiusura' : 'Nessun orario disponibile', ''));
+        errore('data', giornoChiuso(iso) ? 'Quel giorno siamo chiusi: scegli un altro giorno.' : 'Per oggi non ci sono più orari: chiamaci, oppure scegli un altro giorno.');
+        return;
+      }
+      errore('data', null);
+      ora.disabled = false;
+      ora.append(new Option('Scegli un orario', ''));
+      const consigliato = slot.includes('20:30') ? '20:30' : slot.includes('13:00') ? '13:00' : '';
+      for (const s of slot) ora.append(new Option(s, s, false, s === consigliato));
+    }
+    data.addEventListener('change', aggiornaOrari);
+
+    function dataLeggibile(iso: string) {
+      const [y, m, d] = iso.split('-').map(Number);
+      return new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(Date.UTC(y, m - 1, d, 12)));
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const f = new FormData(form);
+      const nome = String(f.get('nome') ?? '').trim();
+      let valido = true;
+
+      errore('nome', nome ? null : 'Scrivi il nome per la prenotazione.');
+      if (!nome) valido = false;
+
+      if (!data.value) {
+        errore('data', 'Scegli il giorno.');
+        valido = false;
+      } else if (data.value < oggi) {
+        errore('data', 'Il giorno è già passato.');
+        valido = false;
+      } else if (giornoChiuso(data.value)) {
+        errore('data', 'Quel giorno siamo chiusi: scegli un altro giorno.');
+        valido = false;
+      }
+
+      if (ora && !ora.value) {
+        errore('ora', 'Scegli un orario.');
+        valido = false;
+      } else if (ora) errore('ora', null);
+
+      if (!valido) {
+        form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+        return;
+      }
+
+      const righe =
+        tipo === 'tavolo'
+          ? [
+              `Buonasera, vorrei prenotare un tavolo all'Arca di Noè.`,
+              ``,
+              `Nome: ${nome}`,
+              `Persone: ${persone.value}`,
+              `Giorno: ${dataLeggibile(data.value)}`,
+              `Orario: ${ora!.value}`,
+              `Zona: ${f.get('zona')}`,
+            ]
+          : [
+              `Buongiorno, vorrei informazioni per un evento all'Arca di Noè.`,
+              ``,
+              `Nome: ${nome}`,
+              `Occasione: ${f.get('occasione')}`,
+              `Invitati: circa ${persone.value}`,
+              `Giorno: ${dataLeggibile(data.value)}`,
+              `Momento: ${f.get('momento')}`,
+            ];
+      const note = String(f.get('note') ?? '').trim();
+      if (note) righe.push(`Note: ${note}`);
+      const testo = righe.join('\n');
+
+      esito.hidden = false;
+      form.querySelector<HTMLElement>('[data-esito-messaggio]')!.textContent = testo;
+      const titolo = form.querySelector<HTMLElement>('[data-esito-titolo]')!;
+
+      if (wa) {
+        titolo.textContent = 'Si sta aprendo WhatsApp. Se non si apre, chiamaci o copia il testo.';
+        window.open(`https://wa.me/${wa}?text=${encodeURIComponent(testo)}`, '_blank', 'noopener');
+      } else {
+        titolo.textContent = `Ecco il riepilogo: chiama il ${locale.telefono} per confermare.`;
+      }
+      esito.focus();
+      esito.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      const copia = form.querySelector<HTMLButtonElement>('[data-copia]')!;
+      copia.onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(testo);
+          copia.querySelector('span')!.textContent = 'Copiato';
+        } catch {
+          copia.querySelector('span')!.textContent = 'Seleziona e copia il testo';
+        }
+      };
+    });
+
+    // Valore iniziale suggerito per il tavolo: oggi se aperto più tardi, altrimenti il prossimo giorno di apertura.
+    if (tipo === 'tavolo') {
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(Date.now() + i * 86400000);
+        const iso = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Rome' }).format(d);
+        const s = slotPrenotabili(iso);
+        const ancora = i > 0 || s.some((x) => Number(x.slice(0, 2)) * 60 + Number(x.slice(3)) >= adessoRoma().minuti + 30);
+        if (s.length && ancora) {
+          data.value = iso;
+          break;
+        }
+      }
+      aggiornaOrari();
+    }
+  });
+</script>
+
+<style>
+  .richiesta {
+    display: grid;
+    gap: 2rem;
+  }
+  .griglia {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.4rem 1.2rem;
+  }
+  .largo {
+    grid-column: 1 / -1;
+  }
+  @media (max-width: 560px) {
+    .griglia {
+      grid-template-columns: 1fr;
+    }
+  }
+  .facoltativo {
+    color: var(--carta-3);
+    font-weight: 400;
+  }
+
+  .contatore {
+    display: grid;
+    grid-template-columns: 52px 1fr 52px;
+    border: 1.5px solid var(--notte-4);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--notte-0);
+  }
+  .contatore:focus-within {
+    border-color: var(--luce);
+  }
+  .contatore input {
+    border: 0;
+    border-radius: 0;
+    text-align: center;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 1.3rem;
+    font-variant-numeric: tabular-nums;
+    box-shadow: none;
+    min-width: 0;
+  }
+  .contatore button {
+    border: 0;
+    background: var(--notte-2);
+    color: var(--luce);
+    font-size: 1.5rem;
+    cursor: pointer;
+    min-height: 52px;
+  }
+  .contatore button:hover {
+    background: var(--notte-3);
+  }
+
+  .zona {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+  .scelte {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    margin-top: 0.45rem;
+  }
+  @media (max-width: 560px) {
+    .scelte {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .scelta {
+    position: relative;
+  }
+  .scelta input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    min-height: 0;
+    cursor: pointer;
+  }
+  .scelta span {
+    display: grid;
+    place-items: center;
+    min-height: 52px;
+    padding: 0.4rem;
+    border: 1.5px solid var(--notte-4);
+    border-radius: 10px;
+    text-align: center;
+    color: var(--carta-2);
+    font-size: 1rem;
+    transition: all 0.2s var(--ease);
+  }
+  .scelta:hover span {
+    border-color: var(--carta-3);
+  }
+  .scelta input:checked + span {
+    border-color: var(--luce);
+    color: var(--notte-0);
+    background: var(--luce);
+    font-weight: 700;
+  }
+  .scelta input:focus-visible + span {
+    outline: 3px solid var(--luce);
+    outline-offset: 3px;
+  }
+
+  .invio {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.4rem;
+  }
+  .invio-nota {
+    color: var(--carta-2);
+    font-size: 0.95rem;
+    max-width: 44ch;
+  }
+  @media (max-width: 560px) {
+    .invio .btn {
+      width: 100%;
+    }
+  }
+
+  .esito {
+    padding: clamp(1.4rem, 3vw, 2rem);
+    border-radius: var(--raggio);
+    background: var(--notte-0);
+    box-shadow: 0 0 0 1.5px var(--luce), 0 20px 60px -30px rgba(244, 197, 106, 0.6);
+  }
+  .esito:focus {
+    outline: none;
+  }
+  .esito-titolo {
+    font-family: var(--display);
+    font-weight: 700;
+    font-stretch: 88%;
+    font-size: 1.3rem;
+    line-height: 1.25;
+  }
+  .esito-messaggio {
+    margin: 1rem 0 0;
+    padding: 1rem;
+    border-radius: 10px;
+    background: var(--notte-2);
+    font-family: var(--testo);
+    font-size: 1rem;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    color: var(--carta);
+  }
+  .esito-azioni {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin-top: 1.2rem;
+  }
+</style>

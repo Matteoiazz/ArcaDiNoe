@@ -1,0 +1,25 @@
+---
+interface Props {
+  nome: 'telefono' | 'chat' | 'pin' | 'orologio' | 'menu' | 'calendario' | 'freccia' | 'persone' | 'auto' | 'foglia' | 'fuoco' | 'musica' | 'copia' | 'esterno' | 'chiudi' | 'cerca';
+  class?: string;
+}
+const { nome, class: cls } = Astro.props;
+---
+<svg class={cls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  {nome === 'telefono' && <path d="M5 3.5h3.2l1.6 4.3-2.1 1.4a11.5 11.5 0 0 0 7.1 7.1l1.4-2.1 4.3 1.6V19a1.5 1.5 0 0 1-1.6 1.5C10.6 20 4 13.4 3.5 5.1A1.5 1.5 0 0 1 5 3.5Z" />}
+  {nome === 'chat' && <><path d="M4 18.5 5.2 15A7.5 7.5 0 1 1 8.6 18l-4.6.5Z" /><path d="M9 10.2c.3 1.6 1.6 3.2 3.4 3.9l1.1-1 1.6.7c-.2 1-1 1.6-2 1.5-2.8-.4-5-2.7-5.3-5.4-.1-1 .5-1.8 1.4-2l.8 1.5-1 .8Z" stroke-width="1.3" /></>}
+  {nome === 'pin' && <><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z" /><circle cx="12" cy="10" r="2.4" /></>}
+  {nome === 'orologio' && <><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></>}
+  {nome === 'menu' && <><path d="M5 4.5h10.5A3.5 3.5 0 0 1 19 8v11.5H8.5A3.5 3.5 0 0 1 5 16V4.5Z" /><path d="M9 9h6M9 12.5h6M9 16h3.5" /></>}
+  {nome === 'calendario' && <><rect x="4" y="5.5" width="16" height="14.5" rx="2" /><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4" /></>}
+  {nome === 'freccia' && <path d="M5 12h14m-5-5 5 5-5 5" />}
+  {nome === 'persone' && <><circle cx="9" cy="8.5" r="3" /><path d="M3.5 19a5.5 5.5 0 0 1 11 0" /><path d="M15.5 6a3 3 0 0 1 0 5.6M17.5 14.2A5.5 5.5 0 0 1 20.5 19" /></>}
+  {nome === 'auto' && <><path d="M4.5 16.5V12l2-5h11l2 5v4.5" /><path d="M3.5 12h17v4.5h-17zM6.5 16.5V19M17.5 16.5V19" /><circle cx="7.5" cy="14.2" r=".6" /><circle cx="16.5" cy="14.2" r=".6" /></>}
+  {nome === 'foglia' && <><path d="M5 19c0-8 5-13.5 14-14-.5 9-6 14-14 14Z" /><path d="M5 19 13 11" /></>}
+  {nome === 'fuoco' && <path d="M12 21a6 6 0 0 0 6-6c0-3.5-2.5-5.5-3.5-8.5-1.5 2-2 3-2.5 4.5-1-1-1.5-2-1.5-3.5C8 9.5 6 12 6 15a6 6 0 0 0 6 6Z" />}
+  {nome === 'musica' && <><path d="M9 18V5.5l10-2V16" /><circle cx="6.5" cy="18" r="2.5" /><circle cx="16.5" cy="16" r="2.5" /></>}
+  {nome === 'copia' && <><rect x="8.5" y="8.5" width="11" height="11" rx="2" /><path d="M15.5 8.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5" /></>}
+  {nome === 'esterno' && <><path d="M14 4.5h5.5V10M19.5 4.5 11 13" /><path d="M17 14v4a1.5 1.5 0 0 1-1.5 1.5H6A1.5 1.5 0 0 1 4.5 18V8.5A1.5 1.5 0 0 1 6 7h4" /></>}
+  {nome === 'chiudi' && <path d="M6 6l12 12M18 6 6 18" />}
+  {nome === 'cerca' && <><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></>}
+</svg>

@@ -1,0 +1,57 @@
+---
+import Base from '../layouts/Base.astro';
+import { locale, indirizzoCompleto } from '../data/locale';
+---
+<Base titolo="Privacy">
+  <div class="contenitore testo">
+    <h1>Privacy</h1>
+    <p class="lead">Questo sito non usa cookie di profilazione né strumenti di statistica, e non salva i dati che inserisci.</p>
+
+    <h2>Titolare</h2>
+    <p>{locale.nome}, {indirizzoCompleto}. Telefono {locale.telefono}.</p>
+
+    <h2>Moduli di prenotazione ed eventi</h2>
+    <p>
+      I dati che scrivi nei moduli (nome, data, numero di persone, note) restano nel tuo browser e servono solo a
+      comporre il messaggio. Il sito non li invia e non li conserva. Se scegli di inviarli tramite WhatsApp o di leggerli
+      al telefono, li tratteremo solo per gestire la tua prenotazione e non li conserveremo oltre il necessario.
+    </p>
+
+    <h2>Mappa</h2>
+    <p>
+      La mappa di Google si carica solo se premi “Mostra la mappa”. Da quel momento si applica l’informativa di Google
+      (<a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>).
+    </p>
+
+    <h2>Hosting</h2>
+    <p>
+      Il sito è ospitato da Vercel Inc., che per ragioni tecniche e di sicurezza può registrare dati di connessione come
+      l’indirizzo IP.
+    </p>
+
+    <h2>I tuoi diritti</h2>
+    <p>
+      Puoi chiedere in qualsiasi momento l’accesso, la rettifica o la cancellazione dei tuoi dati contattando il locale.
+      Hai inoltre diritto di proporre reclamo al Garante per la protezione dei dati personali.
+    </p>
+  </div>
+</Base>
+
+<style>
+  .testo {
+    max-width: 760px;
+    padding-block: clamp(48px, 8vw, 110px);
+  }
+  h1 {
+    font-size: clamp(2.6rem, 7vw, 4.5rem);
+    margin-bottom: 1.2rem;
+  }
+  h2 {
+    font-size: 1.6rem;
+    margin: 2.6rem 0 0.7rem;
+    color: var(--luce);
+  }
+  p {
+    color: var(--carta-2);
+  }
+</style>

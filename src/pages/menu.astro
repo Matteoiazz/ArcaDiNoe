@@ -1,0 +1,435 @@
+---
+import Base from '../layouts/Base.astro';
+import Icona from '../components/Icona.astro';
+import Arca from '../components/Arca.astro';
+import { locale } from '../data/locale';
+import { menu, etichette, euro } from '../data/menu';
+---
+<Base
+  titolo="Menu"
+  descrizione={`Il menu dell’Arca di Noè a Trenta (CS): pizze nel forno a legna, antipasti, primi della tradizione calabrese, grigliate di carne e pesce, dolci. Opzioni vegetariane e senza glutine.`}
+>
+  <header class="menu-testa">
+    <div class="contenitore">
+      <h1 class="menu-titolo">Il menu</h1>
+      <p class="lead">
+        Pizze dal forno a legna, cucina calabrese e griglia. Chiedi pure al personale per allergie e intolleranze.
+      </p>
+      {locale.anteprima && <p class="menu-avviso">Menu dimostrativo: piatti e prezzi sono indicativi.</p>}
+    </div>
+  </header>
+
+  <div class="strumenti" data-strumenti>
+    <div class="contenitore strumenti-riga">
+      <nav class="categorie" aria-label="Categorie del menu">
+        {menu.map((c) => <a href={`#${c.id}`} data-cat-link={c.id}>{c.nome}</a>)}
+      </nav>
+      <div class="filtri">
+        <label class="cerca">
+          <Icona nome="cerca" />
+          <span class="sr-only">Cerca nel menu</span>
+          <input type="search" placeholder="Cerca un piatto" data-cerca autocomplete="off" />
+        </label>
+        <button type="button" class="filtro" aria-pressed="false" data-filtro="v"><Icona nome="foglia" /> Vegetariano</button>
+        <button type="button" class="filtro" aria-pressed="false" data-filtro="gf">Senza glutine</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="contenitore menu-corpo">
+    <div class="menu-griglia">
+      {menu.map((c) => (
+        <section class="categoria" id={c.id} data-categoria aria-labelledby={`t-${c.id}`}>
+          <h2 id={`t-${c.id}`} class="categoria-nome">{c.nome}</h2>
+          {c.nota && <p class="categoria-nota">{c.nota}</p>}
+          <ul class="piatti">
+            {c.piatti.map((p) => (
+              <li class="piatto" data-piatto data-tag={(p.etichette ?? []).join(' ')} data-testo={`${p.nome} ${p.descrizione ?? ''}`.toLowerCase()}>
+                <div class="piatto-riga">
+                  <h3 class="piatto-nome">{p.nome}</h3>
+                  <span class="puntini" aria-hidden="true"></span>
+                  <span class="piatto-prezzo"><span class="sr-only">Prezzo: </span>€ {euro(p.prezzo)}</span>
+                </div>
+                {(p.descrizione || p.etichette) && (
+                  <p class="piatto-desc">
+                    {p.descrizione}
+                    {p.etichette?.map((e) => (
+                      <abbr class:list={['tag', `tag-${e}`]} title={etichette[e].lungo}>
+                        {etichette[e].breve}
+                      </abbr>
+                    ))}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+
+    <p class="vuoto" data-vuoto hidden>
+      <Arca class="vuoto-arca" />
+      Nessun piatto corrisponde. <button type="button" class="vuoto-reset" data-reset>Mostra tutto il menu</button>
+    </p>
+
+    <aside class="legenda" aria-label="Legenda">
+      {Object.entries(etichette).map(([k, v]) => (
+        <span><abbr class:list={['tag', `tag-${k}`]}>{v.breve}</abbr> {v.lungo}</span>
+      ))}
+      <span>Coperto e allergeni: chiedere al personale.</span>
+    </aside>
+
+    <div class="menu-cta">
+      <p>Hai scelto?</p>
+      <a class="btn btn-luce" href="/prenota"><Icona nome="calendario" /> Prenota un tavolo</a>
+      <a class="btn btn-linea" href={`tel:${locale.telefonoLink}`}><Icona nome="telefono" /> Ordina da asporto</a>
+    </div>
+  </div>
+</Base>
+
+<script>
+  const cerca = document.querySelector<HTMLInputElement>('[data-cerca]')!;
+  const filtri = [...document.querySelectorAll<HTMLButtonElement>('[data-filtro]')];
+  const piatti = [...document.querySelectorAll<HTMLElement>('[data-piatto]')];
+  const categorie = [...document.querySelectorAll<HTMLElement>('[data-categoria]')];
+  const vuoto = document.querySelector<HTMLElement>('[data-vuoto]')!;
+
+  const normalizza = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’']/g, ' ').toLowerCase();
+
+  function applica() {
+    const q = normalizza(cerca.value.trim());
+    const attivi = filtri.filter((f) => f.getAttribute('aria-pressed') === 'true').map((f) => f.dataset.filtro!);
+    let totale = 0;
+    for (const p of piatti) {
+      const tag = (p.dataset.tag ?? '').split(' ');
+      const ok = (!q || normalizza(p.dataset.testo ?? '').includes(q)) && attivi.every((a) => tag.includes(a));
+      p.hidden = !ok;
+      if (ok) totale++;
+    }
+    for (const c of categorie) c.hidden = !c.querySelector('[data-piatto]:not([hidden])');
+    vuoto.hidden = totale > 0;
+  }
+
+  cerca.addEventListener('input', applica);
+  filtri.forEach((f) =>
+    f.addEventListener('click', () => {
+      f.setAttribute('aria-pressed', String(f.getAttribute('aria-pressed') !== 'true'));
+      applica();
+    }),
+  );
+  document.querySelector('[data-reset]')?.addEventListener('click', () => {
+    cerca.value = '';
+    filtri.forEach((f) => f.setAttribute('aria-pressed', 'false'));
+    applica();
+  });
+
+  // Categoria attiva nella barra mentre si scorre
+  const link = new Map([...document.querySelectorAll<HTMLAnchorElement>('[data-cat-link]')].map((a) => [a.dataset.catLink!, a]));
+  const osserva = new IntersectionObserver(
+    (voci) => {
+      for (const v of voci) {
+        if (!v.isIntersecting) continue;
+        link.forEach((a) => a.removeAttribute('aria-current'));
+        const a = link.get(v.target.id);
+        if (a) {
+          a.setAttribute('aria-current', 'true');
+          a.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+        }
+      }
+    },
+    { rootMargin: '-35% 0px -60% 0px' },
+  );
+  categorie.forEach((c) => osserva.observe(c));
+</script>
+
+<style>
+  .menu-testa {
+    padding-block: clamp(48px, 8vw, 100px) clamp(28px, 4vw, 48px);
+    background:
+      radial-gradient(70% 120% at 85% 0%, rgba(244, 197, 106, 0.14), transparent 60%),
+      var(--notte-1);
+  }
+  .menu-titolo {
+    font-size: clamp(3.6rem, 12vw, 8.5rem);
+    font-weight: 800;
+    font-stretch: 75%;
+    line-height: 0.85;
+    margin-bottom: 1.2rem;
+  }
+  .menu-avviso {
+    margin-top: 1rem;
+    display: inline-block;
+    font-size: 0.95rem;
+    color: var(--luce);
+  }
+
+  .strumenti {
+    position: sticky;
+    top: 68px;
+    z-index: 40;
+    background: color-mix(in oklab, var(--notte-1) 92%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-block: 1px solid var(--notte-3);
+  }
+  .strumenti-riga {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-block: 0.6rem;
+  }
+  .categorie {
+    display: flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    flex: 1;
+    min-width: 0;
+    mask-image: linear-gradient(90deg, #000 90%, transparent);
+  }
+  .categorie::-webkit-scrollbar {
+    display: none;
+  }
+  .categorie a {
+    flex: none;
+    padding: 0.55rem 0.85rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-family: var(--display);
+    font-weight: 650;
+    font-stretch: 90%;
+    color: var(--carta-2);
+    white-space: nowrap;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .categorie a:hover {
+    color: var(--carta);
+  }
+  .categorie a[aria-current] {
+    color: var(--notte-0);
+    background: var(--luce);
+  }
+  .filtri {
+    display: flex;
+    gap: 0.5rem;
+    flex: none;
+  }
+  .cerca {
+    position: relative;
+    display: block;
+  }
+  .cerca :global(svg) {
+    position: absolute;
+    left: 0.8rem;
+    top: 50%;
+    width: 18px;
+    translate: 0 -50%;
+    color: var(--carta-3);
+    pointer-events: none;
+  }
+  .cerca input {
+    min-height: 44px;
+    width: 200px;
+    padding-left: 2.4rem;
+  }
+  .filtro {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    padding: 0 0.9rem;
+    border-radius: 10px;
+    border: 1.5px solid var(--notte-4);
+    background: transparent;
+    color: var(--carta-2);
+    font: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .filtro :global(svg) {
+    width: 16px;
+  }
+  .filtro:hover {
+    border-color: var(--carta-3);
+    color: var(--carta);
+  }
+  .filtro[aria-pressed='true'] {
+    border-color: var(--giardino);
+    color: var(--notte-0);
+    background: var(--giardino);
+  }
+
+  @media (max-width: 900px) {
+    .strumenti-riga {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.4rem;
+    }
+    .filtri {
+      order: -1;
+      flex-wrap: wrap;
+    }
+    .cerca {
+      flex: 1 1 100%;
+    }
+    .filtro {
+      flex: 1;
+      justify-content: center;
+    }
+    .cerca input {
+      width: 100%;
+    }
+  }
+  @media (max-width: 480px) {
+    .filtro :global(svg) {
+      display: none;
+    }
+    .filtro {
+      padding: 0 0.7rem;
+      font-size: 0.875rem;
+    }
+  }
+
+  .menu-corpo {
+    padding-block: clamp(40px, 6vw, 80px);
+  }
+  .menu-griglia {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(3rem, 6vw, 5.5rem) clamp(3rem, 7vw, 7rem);
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .menu-griglia {
+      grid-template-columns: 1fr;
+    }
+  }
+  .categoria {
+    scroll-margin-top: 150px;
+  }
+  .categoria-nome {
+    font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+    color: var(--luce);
+    padding-bottom: 0.9rem;
+    border-bottom: 2px solid var(--notte-3);
+  }
+  .categoria-nota {
+    margin-top: 0.8rem;
+    color: var(--carta-2);
+    font-size: 1rem;
+  }
+  .piatti {
+    list-style: none;
+    margin: 1.1rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.15rem;
+  }
+  .piatto-riga {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+  .piatto-nome {
+    font-family: var(--testo);
+    font-weight: 700;
+    font-stretch: normal;
+    font-size: 1.15rem;
+    letter-spacing: 0;
+    line-height: 1.35;
+  }
+  .piatto-prezzo {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .piatto-desc {
+    margin-top: 0.2rem;
+    color: var(--carta-2);
+    font-size: 1rem;
+    line-height: 1.5;
+    max-width: 48ch;
+  }
+  .tag {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.6rem;
+    height: 1.35rem;
+    margin-left: 0.4rem;
+    padding: 0 0.3rem;
+    border-radius: 5px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-decoration: none;
+    vertical-align: 0.1em;
+    border: 1px solid currentColor;
+    cursor: help;
+  }
+  .tag-v {
+    color: var(--giardino);
+  }
+  .tag-gf {
+    color: var(--luce);
+  }
+  .tag-hot {
+    color: #f19a7c;
+  }
+
+  .vuoto {
+    display: grid;
+    justify-items: center;
+    gap: 0.8rem;
+    padding-block: 3rem;
+    text-align: center;
+    color: var(--carta-2);
+  }
+  .vuoto-arca {
+    width: 64px;
+    color: var(--notte-4);
+  }
+  .vuoto-reset {
+    font: inherit;
+    color: var(--luce);
+    background: none;
+    border: 0;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+    min-height: 44px;
+  }
+
+  .legenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.6rem;
+    margin-top: clamp(3rem, 6vw, 5rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--notte-3);
+    color: var(--carta-3);
+    font-size: 0.95rem;
+  }
+  .legenda .tag {
+    margin: 0 0.3rem 0 0;
+  }
+
+  .menu-cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.8rem 1rem;
+    margin-top: clamp(3rem, 6vw, 4.5rem);
+    padding: clamp(1.5rem, 3vw, 2.2rem);
+    border-radius: var(--raggio);
+    background: var(--notte-2);
+  }
+  .menu-cta p {
+    font-family: var(--display);
+    font-weight: 800;
+    font-stretch: 78%;
+    font-size: 2rem;
+    margin-right: auto;
+  }
+</style>

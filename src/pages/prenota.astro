@@ -1,0 +1,127 @@
+---
+import Base from '../layouts/Base.astro';
+import Richiesta from '../components/Richiesta.astro';
+import Icona from '../components/Icona.astro';
+import { locale } from '../data/locale';
+import { orarioGiorno } from '../lib/orari';
+
+const giorni = [1, 2, 3, 4, 5, 6, 0];
+---
+<Base titolo="Prenota un tavolo" descrizione={`Prenota un tavolo all’Arca di Noè a Trenta, Casali del Manco: pizzeria, ristorante e griglieria con vista su Cosenza. Chiama il ${locale.telefono}.`} senzaBarra>
+  <div class="contenitore pagina">
+    <div class="colonna-modulo">
+      <h1 class="titolo">Prenota un tavolo</h1>
+      <p class="lead">Scegli giorno, orario e quanti siete. Per gruppi grandi o feste guarda la pagina <a href="/eventi">eventi</a>. Hai fretta? Chiama il <a href={`tel:${locale.telefonoLink}`}>{locale.telefono}</a>.</p>
+      <div class="modulo">
+        <Richiesta tipo="tavolo" />
+      </div>
+    </div>
+
+    <aside class="colonna-info">
+      <div class="telefono">
+        <p class="telefono-titolo">Preferisci chiamare?</p>
+        <a class="telefono-numero" href={`tel:${locale.telefonoLink}`}><Icona nome="telefono" /> {locale.telefono}</a>
+        <p class="stato-riga" data-stato>
+          <span data-stato-testo></span>
+        </p>
+      </div>
+      <dl class="orari">
+        {giorni.map((g) => (
+          <div data-giorno={g}>
+            <dt>{locale.orari.find((o) => o.giorno === g)!.nome}</dt>
+            <dd>{orarioGiorno(g)}</dd>
+          </div>
+        ))}
+      </dl>
+    </aside>
+  </div>
+</Base>
+
+<style>
+  .pagina {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: clamp(2.5rem, 6vw, 6rem);
+    padding-block: clamp(40px, 7vw, 96px) clamp(64px, 9vw, 120px);
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .pagina {
+      grid-template-columns: 1fr;
+    }
+  }
+  .titolo {
+    font-size: clamp(2.8rem, 8vw, 5.5rem);
+    font-weight: 800;
+    font-stretch: 76%;
+    line-height: 0.9;
+    margin-bottom: 1rem;
+  }
+  .modulo {
+    margin-top: 2.4rem;
+  }
+  .colonna-info {
+    position: sticky;
+    top: 100px;
+    display: grid;
+    gap: 2rem;
+  }
+  .telefono {
+    padding: clamp(1.5rem, 3vw, 2rem);
+    border-radius: var(--raggio);
+    background: var(--notte-2);
+  }
+  .telefono-titolo {
+    color: var(--carta-2);
+  }
+  .telefono-numero {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.4rem;
+    font-family: var(--display);
+    font-weight: 800;
+    font-stretch: 80%;
+    font-size: clamp(2rem, 4vw, 2.6rem);
+    text-decoration: none;
+    color: var(--luce);
+  }
+  .telefono-numero :global(svg) {
+    width: 0.8em;
+  }
+  .stato-riga {
+    margin-top: 0.6rem;
+    color: var(--carta-2);
+  }
+  .stato-riga[data-aperto='true'] {
+    color: var(--giardino);
+  }
+  .orari {
+    margin: 0;
+    display: grid;
+    gap: 0.4rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .orari div {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--notte-3);
+    color: var(--carta-2);
+  }
+  .orari dd {
+    margin: 0;
+  }
+  .orari div[data-oggi] {
+    color: var(--luce-forte);
+    font-weight: 700;
+  }
+  @media (max-width: 900px) {
+    .colonna-info {
+      position: static;
+    }
+    .orari {
+      display: none;
+    }
+  }
+</style>

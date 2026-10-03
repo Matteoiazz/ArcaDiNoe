@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+import Arca from '../components/Arca.astro';
+---
+<Base titolo="Pagina non trovata">
+  <div class="contenitore vuoto">
+    <Arca class="arca" />
+    <h1>Questa pagina è andata alla deriva.</h1>
+    <p class="lead">L’indirizzo non esiste o è cambiato. Da qui si torna a terra:</p>
+    <div class="azioni">
+      <a class="btn btn-luce" href="/">Torna alla home</a>
+      <a class="btn btn-linea" href="/menu">Vedi il menu</a>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .vuoto {
+    min-height: 70svh;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    text-align: center;
+    gap: 1.2rem;
+    padding-block: 80px;
+  }
+  .arca {
+    width: 120px;
+    color: var(--notte-4);
+    animation: dondola 4s ease-in-out infinite;
+  }
+  @keyframes dondola {
+    50% {
+      transform: rotate(-4deg) translateY(4px);
+    }
+  }
+  h1 {
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    max-width: 16ch;
+  }
+  .azioni {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.7rem;
+    margin-top: 0.6rem;
+  }
+</style>
