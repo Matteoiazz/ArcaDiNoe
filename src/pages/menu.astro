@@ -1,25 +1,25 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icona from '../components/Icona.astro';
-import Arca from '../components/Arca.astro';
 import { locale } from '../data/locale';
 import { menu, etichette, euro } from '../data/menu';
 ---
 <Base
   titolo="Menu"
-  descrizione={`Il menu dell’Arca di Noè a Trenta (CS): pizze nel forno a legna, antipasti, primi della tradizione calabrese, grigliate di carne e pesce, dolci. Opzioni vegetariane e senza glutine.`}
+  descrizione="Il menu dell’Arca di Noè a Trenta (CS): pizze nel forno a legna, antipasti, primi della tradizione calabrese, grigliate di carne e pesce, dolci. Opzioni vegetariane e senza glutine."
 >
-  <header class="menu-testa">
+  <header class="testa">
     <div class="contenitore">
-      <h1 class="menu-titolo">Il menu</h1>
+      <h1>Menu</h1>
       <p class="lead">
-        Pizze dal forno a legna, cucina calabrese e griglia. Chiedi pure al personale per allergie e intolleranze.
+        Pizze dal forno a legna, cucina calabrese e griglia. Per allergie e intolleranze chiedete pure al personale: vi
+        indicheremo i piatti adatti.
       </p>
-      {locale.anteprima && <p class="menu-avviso">Menu dimostrativo: piatti e prezzi sono indicativi.</p>}
+      {locale.anteprima && <p class="avviso">Menu dimostrativo: piatti e prezzi sono indicativi.</p>}
     </div>
   </header>
 
-  <div class="strumenti" data-strumenti>
+  <div class="strumenti">
     <div class="contenitore strumenti-riga">
       <nav class="categorie" aria-label="Categorie del menu">
         {menu.map((c) => <a href={`#${c.id}`} data-cat-link={c.id}>{c.nome}</a>)}
@@ -30,36 +30,31 @@ import { menu, etichette, euro } from '../data/menu';
           <span class="sr-only">Cerca nel menu</span>
           <input type="search" placeholder="Cerca un piatto" data-cerca autocomplete="off" />
         </label>
-        <button type="button" class="filtro" aria-pressed="false" data-filtro="v"><Icona nome="foglia" /> Vegetariano</button>
+        <button type="button" class="filtro" aria-pressed="false" data-filtro="v">Vegetariano</button>
         <button type="button" class="filtro" aria-pressed="false" data-filtro="gf">Senza glutine</button>
       </div>
     </div>
   </div>
 
-  <div class="contenitore menu-corpo">
-    <div class="menu-griglia">
+  <div class="contenitore corpo">
+    <div class="griglia">
       {menu.map((c) => (
         <section class="categoria" id={c.id} data-categoria aria-labelledby={`t-${c.id}`}>
-          <h2 id={`t-${c.id}`} class="categoria-nome">{c.nome}</h2>
-          {c.nota && <p class="categoria-nota">{c.nota}</p>}
+          <h2 id={`t-${c.id}`}>{c.nome}</h2>
+          {c.nota && <p class="nota">{c.nota}</p>}
           <ul class="piatti">
             {c.piatti.map((p) => (
               <li class="piatto" data-piatto data-tag={(p.etichette ?? []).join(' ')} data-testo={`${p.nome} ${p.descrizione ?? ''}`.toLowerCase()}>
                 <div class="piatto-riga">
-                  <h3 class="piatto-nome">{p.nome}</h3>
-                  <span class="puntini" aria-hidden="true"></span>
-                  <span class="piatto-prezzo"><span class="sr-only">Prezzo: </span>€ {euro(p.prezzo)}</span>
-                </div>
-                {(p.descrizione || p.etichette) && (
-                  <p class="piatto-desc">
-                    {p.descrizione}
+                  <h3>
+                    {p.nome}
                     {p.etichette?.map((e) => (
-                      <abbr class:list={['tag', `tag-${e}`]} title={etichette[e].lungo}>
-                        {etichette[e].breve}
-                      </abbr>
+                      <abbr class:list={['tag', `tag-${e}`]} title={etichette[e].lungo}>{etichette[e].breve}</abbr>
                     ))}
-                  </p>
-                )}
+                  </h3>
+                  <span class="prezzo"><span class="sr-only">Prezzo: </span>€ {euro(p.prezzo)}</span>
+                </div>
+                {p.descrizione && <p class="descrizione">{p.descrizione}</p>}
               </li>
             ))}
           </ul>
@@ -67,22 +62,27 @@ import { menu, etichette, euro } from '../data/menu';
       ))}
     </div>
 
-    <p class="vuoto" data-vuoto hidden>
-      <Arca class="vuoto-arca" />
-      Nessun piatto corrisponde. <button type="button" class="vuoto-reset" data-reset>Mostra tutto il menu</button>
-    </p>
+    <div class="vuoto" data-vuoto hidden>
+      <p>Nessun piatto corrisponde alla ricerca.</p>
+      <button type="button" class="btn btn-bordo" data-reset>Mostra tutto il menu</button>
+    </div>
 
     <aside class="legenda" aria-label="Legenda">
       {Object.entries(etichette).map(([k, v]) => (
         <span><abbr class:list={['tag', `tag-${k}`]}>{v.breve}</abbr> {v.lungo}</span>
       ))}
-      <span>Coperto e allergeni: chiedere al personale.</span>
+      <span>Coperto, allergeni e disponibilità: chiedere al personale.</span>
     </aside>
 
-    <div class="menu-cta">
-      <p>Hai scelto?</p>
-      <a class="btn btn-luce" href="/prenota"><Icona nome="calendario" /> Prenota un tavolo</a>
-      <a class="btn btn-linea" href={`tel:${locale.telefonoLink}`}><Icona nome="telefono" /> Ordina da asporto</a>
+    <div class="cta">
+      <div>
+        <h2>Vi aspettiamo a tavola</h2>
+        <p>Prenotate online o chiamate. Le pizze si possono ordinare anche da asporto.</p>
+      </div>
+      <div class="cta-azioni">
+        <a class="btn btn-pieno" href="/prenota">Prenota un tavolo</a>
+        <a class="btn btn-bordo" href={`tel:${locale.telefonoLink}`}><Icona nome="telefono" /> {locale.telefono}</a>
+      </div>
     </div>
   </div>
 </Base>
@@ -123,7 +123,7 @@ import { menu, etichette, euro } from '../data/menu';
     applica();
   });
 
-  // Categoria attiva nella barra mentre si scorre
+  // Categoria attiva mentre si scorre
   const link = new Map([...document.querySelectorAll<HTMLAnchorElement>('[data-cat-link]')].map((a) => [a.dataset.catLink!, a]));
   const osserva = new IntersectionObserver(
     (voci) => {
@@ -133,44 +133,48 @@ import { menu, etichette, euro } from '../data/menu';
         const a = link.get(v.target.id);
         if (a) {
           a.setAttribute('aria-current', 'true');
-          a.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+          a.parentElement!.scrollTo({ left: a.offsetLeft - 20, behavior: 'smooth' });
         }
       }
     },
-    { rootMargin: '-35% 0px -60% 0px' },
+    { rootMargin: '-30% 0px -65% 0px' },
   );
   categorie.forEach((c) => osserva.observe(c));
 </script>
 
 <style>
-  .menu-testa {
-    padding-block: clamp(48px, 8vw, 100px) clamp(28px, 4vw, 48px);
-    background:
-      radial-gradient(70% 120% at 85% 0%, rgba(244, 197, 106, 0.14), transparent 60%),
-      var(--notte-1);
+  .testa {
+    padding-block: clamp(48px, 7vw, 88px) clamp(32px, 4vw, 48px);
+    text-align: center;
   }
-  .menu-titolo {
-    font-size: clamp(3.6rem, 12vw, 8.5rem);
-    font-weight: 800;
-    font-stretch: 75%;
-    line-height: 0.85;
-    margin-bottom: 1.2rem;
+  .testa h1 {
+    font-size: clamp(2.6rem, 6vw, 4rem);
+    margin-bottom: 1rem;
   }
-  .menu-avviso {
+  .testa .lead {
+    margin-inline: auto;
+  }
+  .avviso {
     margin-top: 1rem;
-    display: inline-block;
-    font-size: 0.95rem;
-    color: var(--luce);
+    font-size: 0.9rem;
+    color: #8a6a12;
   }
 
   .strumenti {
     position: sticky;
-    top: 68px;
+    top: 80px;
     z-index: 40;
-    background: color-mix(in oklab, var(--notte-1) 92%, transparent);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-block: 1px solid var(--notte-3);
+    background: #fff;
+    border-block: 1px solid var(--linea);
+  }
+  @media (max-width: 900px) {
+    /* Su telefono la barra non resta fissa: lascerebbe troppo poco spazio ai piatti */
+    .strumenti {
+      position: static;
+    }
+    .griglia .categoria {
+      scroll-margin-top: 90px;
+    }
   }
   .strumenti-riga {
     display: flex;
@@ -180,36 +184,34 @@ import { menu, etichette, euro } from '../data/menu';
   }
   .categorie {
     display: flex;
-    gap: 0.25rem;
+    gap: 0.2rem;
     overflow-x: auto;
     scrollbar-width: none;
     flex: 1;
     min-width: 0;
-    mask-image: linear-gradient(90deg, #000 90%, transparent);
   }
   .categorie::-webkit-scrollbar {
     display: none;
   }
   .categorie a {
     flex: none;
-    padding: 0.55rem 0.85rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-family: var(--display);
-    font-weight: 650;
-    font-stretch: 90%;
-    color: var(--carta-2);
-    white-space: nowrap;
-    min-height: 44px;
     display: inline-flex;
     align-items: center;
+    min-height: 42px;
+    padding: 0 0.8rem;
+    border-radius: var(--raggio);
+    text-decoration: none;
+    font-weight: 500;
+    color: var(--ink-2);
+    white-space: nowrap;
   }
   .categorie a:hover {
-    color: var(--carta);
+    color: var(--ink);
+    background: var(--bg-alt);
   }
   .categorie a[aria-current] {
-    color: var(--notte-0);
-    background: var(--luce);
+    color: #fff;
+    background: var(--accento);
   }
   .filtri {
     display: flex;
@@ -218,218 +220,188 @@ import { menu, etichette, euro } from '../data/menu';
   }
   .cerca {
     position: relative;
-    display: block;
   }
   .cerca :global(svg) {
     position: absolute;
-    left: 0.8rem;
+    left: 0.75rem;
     top: 50%;
-    width: 18px;
+    width: 17px;
     translate: 0 -50%;
-    color: var(--carta-3);
+    color: var(--ink-3);
     pointer-events: none;
   }
   .cerca input {
-    min-height: 44px;
-    width: 200px;
-    padding-left: 2.4rem;
+    min-height: 42px;
+    width: 210px;
+    padding-left: 2.3rem;
   }
   .filtro {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    min-height: 44px;
+    min-height: 42px;
     padding: 0 0.9rem;
-    border-radius: 10px;
-    border: 1.5px solid var(--notte-4);
-    background: transparent;
-    color: var(--carta-2);
+    border-radius: var(--raggio);
+    border: 1px solid #cfc8bc;
+    background: #fff;
+    color: var(--ink-2);
     font: inherit;
-    font-size: 0.95rem;
+    font-size: 0.925rem;
     cursor: pointer;
     white-space: nowrap;
   }
-  .filtro :global(svg) {
-    width: 16px;
-  }
   .filtro:hover {
-    border-color: var(--carta-3);
-    color: var(--carta);
+    border-color: var(--ink-3);
+    color: var(--ink);
   }
   .filtro[aria-pressed='true'] {
-    border-color: var(--giardino);
-    color: var(--notte-0);
-    background: var(--giardino);
+    border-color: var(--accento);
+    background: var(--accento);
+    color: #fff;
   }
-
   @media (max-width: 900px) {
     .strumenti-riga {
       flex-direction: column;
       align-items: stretch;
-      gap: 0.4rem;
+      gap: 0.5rem;
     }
     .filtri {
-      order: -1;
       flex-wrap: wrap;
     }
     .cerca {
       flex: 1 1 100%;
     }
-    .filtro {
-      flex: 1;
-      justify-content: center;
-    }
     .cerca input {
       width: 100%;
     }
-  }
-  @media (max-width: 480px) {
-    .filtro :global(svg) {
-      display: none;
-    }
     .filtro {
-      padding: 0 0.7rem;
-      font-size: 0.875rem;
+      flex: 1;
     }
   }
 
-  .menu-corpo {
-    padding-block: clamp(40px, 6vw, 80px);
+  .corpo {
+    padding-block: clamp(40px, 6vw, 72px) clamp(64px, 9vw, 112px);
   }
-  .menu-griglia {
+  .griglia {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: clamp(3rem, 6vw, 5.5rem) clamp(3rem, 7vw, 7rem);
+    gap: clamp(3rem, 5vw, 4.5rem) clamp(3rem, 7vw, 6rem);
     align-items: start;
   }
   @media (max-width: 860px) {
-    .menu-griglia {
+    .griglia {
       grid-template-columns: 1fr;
     }
   }
   .categoria {
-    scroll-margin-top: 150px;
+    scroll-margin-top: 170px;
   }
-  .categoria-nome {
-    font-size: clamp(2.2rem, 4.5vw, 3.2rem);
-    color: var(--luce);
-    padding-bottom: 0.9rem;
-    border-bottom: 2px solid var(--notte-3);
+  .categoria h2 {
+    font-size: clamp(1.8rem, 3vw, 2.2rem);
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--ink);
   }
-  .categoria-nota {
+  .nota {
     margin-top: 0.8rem;
-    color: var(--carta-2);
-    font-size: 1rem;
+    color: var(--ink-3);
+    font-size: 0.95rem;
   }
   .piatti {
     list-style: none;
-    margin: 1.1rem 0 0;
+    margin: 0;
     padding: 0;
-    display: grid;
-    gap: 1.15rem;
+  }
+  .piatto {
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--linea);
   }
   .piatto-riga {
     display: flex;
+    justify-content: space-between;
     align-items: baseline;
-    gap: 0.6rem;
+    gap: 1rem;
   }
-  .piatto-nome {
-    font-family: var(--testo);
-    font-weight: 700;
-    font-stretch: normal;
-    font-size: 1.15rem;
+  .piatto h3 {
+    font-family: var(--sans);
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.4;
     letter-spacing: 0;
-    line-height: 1.35;
   }
-  .piatto-prezzo {
-    font-weight: 700;
+  .prezzo {
+    font-weight: 600;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
-  .piatto-desc {
+  .descrizione {
     margin-top: 0.2rem;
-    color: var(--carta-2);
-    font-size: 1rem;
-    line-height: 1.5;
+    color: var(--ink-2);
+    font-size: 0.95rem;
     max-width: 48ch;
   }
   .tag {
     display: inline-grid;
     place-items: center;
-    min-width: 1.6rem;
-    height: 1.35rem;
+    min-width: 1.5rem;
+    height: 1.25rem;
     margin-left: 0.4rem;
-    padding: 0 0.3rem;
-    border-radius: 5px;
-    font-size: 0.72rem;
+    padding: 0 0.25rem;
+    border-radius: 3px;
+    font-size: 0.68rem;
     font-weight: 700;
+    letter-spacing: 0.02em;
     text-decoration: none;
-    vertical-align: 0.1em;
+    vertical-align: 0.12em;
     border: 1px solid currentColor;
     cursor: help;
   }
   .tag-v {
-    color: var(--giardino);
+    color: var(--aperto);
   }
   .tag-gf {
-    color: var(--luce);
+    color: #8a6a12;
   }
   .tag-hot {
-    color: #f19a7c;
+    color: #b3261e;
   }
 
   .vuoto {
     display: grid;
     justify-items: center;
-    gap: 0.8rem;
+    gap: 1rem;
     padding-block: 3rem;
-    text-align: center;
-    color: var(--carta-2);
-  }
-  .vuoto-arca {
-    width: 64px;
-    color: var(--notte-4);
-  }
-  .vuoto-reset {
-    font: inherit;
-    color: var(--luce);
-    background: none;
-    border: 0;
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
-    cursor: pointer;
-    min-height: 44px;
+    color: var(--ink-2);
   }
 
   .legenda {
     display: flex;
     flex-wrap: wrap;
     gap: 0.6rem 1.6rem;
-    margin-top: clamp(3rem, 6vw, 5rem);
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--notte-3);
-    color: var(--carta-3);
-    font-size: 0.95rem;
+    margin-top: clamp(3rem, 5vw, 4rem);
+    color: var(--ink-3);
+    font-size: 0.9rem;
   }
   .legenda .tag {
     margin: 0 0.3rem 0 0;
   }
 
-  .menu-cta {
+  .cta {
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
     align-items: center;
-    gap: 0.8rem 1rem;
-    margin-top: clamp(3rem, 6vw, 4.5rem);
-    padding: clamp(1.5rem, 3vw, 2.2rem);
-    border-radius: var(--raggio);
-    background: var(--notte-2);
+    gap: 1.5rem 2rem;
+    margin-top: clamp(3rem, 5vw, 4rem);
+    padding: clamp(1.75rem, 3vw, 2.5rem);
+    background: var(--bg-alt);
   }
-  .menu-cta p {
-    font-family: var(--display);
-    font-weight: 800;
-    font-stretch: 78%;
-    font-size: 2rem;
-    margin-right: auto;
+  .cta h2 {
+    font-size: 1.7rem;
+  }
+  .cta p {
+    margin-top: 0.4rem;
+    color: var(--ink-2);
+  }
+  .cta-azioni {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
   }
 </style>

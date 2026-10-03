@@ -9,30 +9,34 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
 ---
 <Base titolo="Prenota un tavolo" descrizione={`Prenota un tavolo all’Arca di Noè a Trenta, Casali del Manco: pizzeria, ristorante e griglieria con vista su Cosenza. Chiama il ${locale.telefono}.`} senzaBarra>
   <div class="contenitore pagina">
-    <div class="colonna-modulo">
-      <h1 class="titolo">Prenota un tavolo</h1>
-      <p class="lead">Scegli giorno, orario e quanti siete. Per gruppi grandi o feste guarda la pagina <a href="/eventi">eventi</a>. Hai fretta? Chiama il <a href={`tel:${locale.telefonoLink}`}>{locale.telefono}</a>.</p>
+    <div>
+      <h1>Prenota un tavolo</h1>
+      <p class="lead">
+        Indicate giorno, orario e numero di persone: vi confermeremo la prenotazione il prima possibile. Per gruppi numerosi
+        e feste visitate la pagina <a href="/eventi">Sale ed eventi</a>.
+      </p>
       <div class="modulo">
         <Richiesta tipo="tavolo" />
       </div>
     </div>
 
-    <aside class="colonna-info">
-      <div class="telefono">
-        <p class="telefono-titolo">Preferisci chiamare?</p>
-        <a class="telefono-numero" href={`tel:${locale.telefonoLink}`}><Icona nome="telefono" /> {locale.telefono}</a>
-        <p class="stato-riga" data-stato>
-          <span data-stato-testo></span>
-        </p>
+    <aside class="laterale">
+      <div class="riquadro">
+        <h2>Preferite telefonare?</h2>
+        <a class="telefono" href={`tel:${locale.telefonoLink}`}><Icona nome="telefono" /> {locale.telefono}</a>
+        <p class="stato" data-stato><span data-stato-testo></span></p>
       </div>
-      <dl class="orari">
-        {giorni.map((g) => (
-          <div data-giorno={g}>
-            <dt>{locale.orari.find((o) => o.giorno === g)!.nome}</dt>
-            <dd>{orarioGiorno(g)}</dd>
-          </div>
-        ))}
-      </dl>
+      <div class="riquadro">
+        <h2>Orari</h2>
+        <dl class="orari">
+          {giorni.map((g) => (
+            <div data-giorno={g}>
+              <dt>{locale.orari.find((o) => o.giorno === g)!.nome}</dt>
+              <dd>{orarioGiorno(g)}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
     </aside>
   </div>
 </Base>
@@ -40,9 +44,9 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
 <style>
   .pagina {
     display: grid;
-    grid-template-columns: 1.5fr 1fr;
-    gap: clamp(2.5rem, 6vw, 6rem);
-    padding-block: clamp(40px, 7vw, 96px) clamp(64px, 9vw, 120px);
+    grid-template-columns: 1.6fr 1fr;
+    gap: clamp(2.5rem, 6vw, 5.5rem);
+    padding-block: clamp(48px, 7vw, 88px) clamp(64px, 9vw, 112px);
     align-items: start;
   }
   @media (max-width: 900px) {
@@ -50,78 +54,52 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
       grid-template-columns: 1fr;
     }
   }
-  .titolo {
-    font-size: clamp(2.8rem, 8vw, 5.5rem);
-    font-weight: 800;
-    font-stretch: 76%;
-    line-height: 0.9;
+  h1 {
+    font-size: clamp(2.4rem, 5vw, 3.4rem);
     margin-bottom: 1rem;
   }
   .modulo {
-    margin-top: 2.4rem;
+    margin-top: 2.2rem;
   }
-  .colonna-info {
+  .laterale {
     position: sticky;
-    top: 100px;
+    top: 110px;
     display: grid;
-    gap: 2rem;
+    gap: 1.25rem;
+  }
+  .riquadro {
+    padding: clamp(1.5rem, 3vw, 2rem);
+    background: var(--bg-alt);
+  }
+  .riquadro h2 {
+    font-family: var(--sans);
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
   }
   .telefono {
-    padding: clamp(1.5rem, 3vw, 2rem);
-    border-radius: var(--raggio);
-    background: var(--notte-2);
-  }
-  .telefono-titolo {
-    color: var(--carta-2);
-  }
-  .telefono-numero {
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
-    margin-top: 0.4rem;
-    font-family: var(--display);
-    font-weight: 800;
-    font-stretch: 80%;
-    font-size: clamp(2rem, 4vw, 2.6rem);
+    font-family: var(--serif);
+    font-size: 1.8rem;
     text-decoration: none;
-    color: var(--luce);
   }
-  .telefono-numero :global(svg) {
-    width: 0.8em;
+  .telefono :global(svg) {
+    width: 0.75em;
+    color: var(--accento);
   }
-  .stato-riga {
-    margin-top: 0.6rem;
-    color: var(--carta-2);
+  .stato {
+    margin-top: 0.4rem;
+    color: var(--ink-2);
+    font-size: 0.95rem;
   }
-  .stato-riga[data-aperto='true'] {
-    color: var(--giardino);
-  }
-  .orari {
-    margin: 0;
-    display: grid;
-    gap: 0.4rem;
-    font-variant-numeric: tabular-nums;
-  }
-  .orari div {
-    display: flex;
-    justify-content: space-between;
-    padding-bottom: 0.4rem;
-    border-bottom: 1px solid var(--notte-3);
-    color: var(--carta-2);
-  }
-  .orari dd {
-    margin: 0;
-  }
-  .orari div[data-oggi] {
-    color: var(--luce-forte);
-    font-weight: 700;
+  .stato[data-aperto='true'] {
+    color: var(--aperto);
   }
   @media (max-width: 900px) {
-    .colonna-info {
+    .laterale {
       position: static;
-    }
-    .orari {
-      display: none;
     }
   }
 </style>

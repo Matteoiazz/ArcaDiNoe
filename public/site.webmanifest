@@ -3,7 +3,7 @@
   "short_name": "Arca di Noè",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0e1828",
-  "theme_color": "#0e1828",
+  "background_color": "#ffffff",
+  "theme_color": "#2f4a3a",
   "icons": [{ "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }, { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
 }

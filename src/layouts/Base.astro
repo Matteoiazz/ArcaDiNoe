@@ -2,7 +2,7 @@
 import '../styles/global.css';
 import Arca from '../components/Arca.astro';
 import Icona from '../components/Icona.astro';
-import { locale, indirizzoCompleto, mapsLink } from '../data/locale';
+import { locale, indirizzoCompleto, indirizzoBreve, mapsLink, mapsDirections } from '../data/locale';
 import { orarioGiorno } from '../lib/orari';
 
 interface Props {
@@ -10,22 +10,25 @@ interface Props {
   descrizione?: string;
   /** Nasconde la barra azioni su mobile (es. nella pagina Prenota, dove l'azione è il modulo). */
   senzaBarra?: boolean;
+  /** Intestazione trasparente sopra la foto di apertura (solo home). */
+  sopraFoto?: boolean;
 }
 
 const {
   titolo,
-  descrizione = `${locale.nome}: pizzeria con forno a legna, ristorante e griglieria a Trenta, Casali del Manco (Cosenza). Vista panoramica su Cosenza, giardino, veranda e ampio parcheggio. Prenota un tavolo.`,
+  descrizione = `${locale.nome} è pizzeria con forno a legna, ristorante e griglieria a Trenta, Casali del Manco (Cosenza). Sale ampie, giardino, veranda con vista su Cosenza e parcheggio privato. Prenota un tavolo o organizza il tuo evento.`,
   senzaBarra = false,
+  sopraFoto = false,
 } = Astro.props;
 
-const titoloPagina = titolo ? `${titolo} · ${locale.nome}` : `${locale.nome} · Pizzeria e Ristorante a Casali del Manco (CS)`;
+const titoloPagina = titolo ? `${titolo} · ${locale.nome}` : `${locale.nome} · Pizzeria e Ristorante a Trenta, Casali del Manco (CS)`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL('/og.jpg', Astro.site);
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
 const voci = [
   { href: '/menu', testo: 'Menu' },
-  { href: '/eventi', testo: 'Eventi' },
+  { href: '/eventi', testo: 'Sale ed eventi' },
   { href: '/dove-siamo', testo: 'Dove siamo' },
 ];
 
@@ -71,7 +74,7 @@ const jsonLd = {
     <title>{titoloPagina}</title>
     <meta name="description" content={descrizione} />
     <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content="#0e1828" />
+    <meta name="theme-color" content="#ffffff" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
@@ -88,35 +91,54 @@ const jsonLd = {
     <a class="salta" href="#contenuto">Vai al contenuto</a>
 
     {locale.anteprima && (
-      <div class="anteprima" role="note">
-        Anteprima del sito: foto, prezzi e alcuni dati sono dimostrativi.
-      </div>
+      <div class="anteprima" role="note">Anteprima del sito: foto, prezzi e alcuni dati sono dimostrativi.</div>
     )}
 
-    <header class="testata">
+    <div class="info-barra">
+      <div class="contenitore info-riga">
+        <a href={mapsDirections} target="_blank" rel="noopener"><Icona nome="pin" /> {indirizzoBreve}, Casali del Manco</a>
+        <span class="info-dx">
+          <span class="stato" data-stato><span class="stato-punto" aria-hidden="true"></span><span data-stato-testo>Orari</span></span>
+          <a href={`tel:${locale.telefonoLink}`}><Icona nome="telefono" /> {locale.telefono}</a>
+        </span>
+      </div>
+    </div>
+
+    <header class:list={['testata', { 'sopra-foto': sopraFoto }]} data-testata>
       <div class="contenitore testata-riga">
         <a href="/" class="marchio" aria-label={`${locale.nome}, home`}>
           <Arca class="marchio-arca" />
-          <span class="marchio-nome">L’Arca di Noè</span>
+          <span class="marchio-testo">
+            <span class="marchio-nome">L’Arca di Noè</span>
+            <span class="marchio-tipo">Pizzeria · Ristorante · Griglieria</span>
+          </span>
         </a>
 
         <nav class="nav" aria-label="Principale">
           <ul>
             {voci.map((v) => (
-              <li>
-                <a href={v.href} aria-current={path === v.href ? 'page' : undefined}>{v.testo}</a>
-              </li>
+              <li><a href={v.href} aria-current={path === v.href ? 'page' : undefined}>{v.testo}</a></li>
             ))}
           </ul>
+          <a class="btn btn-pieno" href="/prenota">Prenota un tavolo</a>
         </nav>
 
-        <div class="testata-azioni">
-          <span class="stato" data-stato aria-live="polite">
-            <span class="stato-luce" aria-hidden="true"></span>
-            <span data-stato-testo>Orari</span>
-          </span>
-          <a class="btn btn-luce testata-prenota" href="/prenota">Prenota</a>
-        </div>
+        <button class="apri-menu" type="button" aria-expanded="false" aria-controls="menu-mobile" data-apri-menu>
+          <span class="sr-only">Apri il menu</span>
+          <span class="hamburger" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div class="menu-mobile" id="menu-mobile" hidden data-menu-mobile>
+        <ul>
+          <li><a href="/">Home</a></li>
+          {voci.map((v) => <li><a href={v.href}>{v.testo}</a></li>)}
+          <li><a href="/prenota">Prenota un tavolo</a></li>
+        </ul>
+        <p class="menu-mobile-info">
+          <a href={`tel:${locale.telefonoLink}`}>{locale.telefono}</a><br />
+          {indirizzoCompleto}
+        </p>
       </div>
     </header>
 
@@ -126,12 +148,18 @@ const jsonLd = {
 
     <footer class="piede">
       <div class="contenitore piede-griglia">
-        <div class="piede-marchio">
-          <Arca class="piede-arca" />
+        <div>
           <p class="piede-nome">L’Arca di Noè</p>
-          <p class="piede-tipo">{locale.tipo}</p>
-          <p class="piede-indirizzo">
-            <a href={mapsLink} target="_blank" rel="noopener">{indirizzoCompleto}</a>
+          <p class="piede-testo">
+            Pizzeria con forno a legna, ristorante e griglieria a Trenta, sulle colline sopra Cosenza.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="piede-titolo">Contatti</h2>
+          <p class="piede-testo">
+            <a href={mapsLink} target="_blank" rel="noopener">{indirizzoCompleto}</a><br />
+            Tel. <a href={`tel:${locale.telefonoLink}`}>{locale.telefono}</a>
           </p>
         </div>
 
@@ -148,12 +176,12 @@ const jsonLd = {
         </div>
 
         <div>
-          <h2 class="piede-titolo">Contatti</h2>
+          <h2 class="piede-titolo">Pagine</h2>
           <ul class="piede-lista">
-            <li><a href={`tel:${locale.telefonoLink}`}><Icona nome="telefono" /> {locale.telefono}</a></li>
-            <li><a href="/prenota"><Icona nome="calendario" /> Prenota un tavolo</a></li>
-            <li><a href="/eventi"><Icona nome="persone" /> Eventi e banchetti</a></li>
-            <li><a href="/dove-siamo"><Icona nome="pin" /> Come arrivare</a></li>
+            <li><a href="/menu">Menu</a></li>
+            <li><a href="/prenota">Prenota un tavolo</a></li>
+            <li><a href="/eventi">Sale ed eventi</a></li>
+            <li><a href="/dove-siamo">Dove siamo</a></li>
           </ul>
         </div>
       </div>
@@ -165,40 +193,42 @@ const jsonLd = {
 
     {!senzaBarra && (
       <nav class="barra" aria-label="Azioni rapide">
-        <a href={`tel:${locale.telefonoLink}`} class="barra-voce">
-          <Icona nome="telefono" />
-          <span>Chiama</span>
-        </a>
-        <a href="/menu" class="barra-voce">
-          <Icona nome="menu" />
-          <span>Menu</span>
-        </a>
-        <a href="/prenota" class="barra-voce barra-prenota">
-          <Icona nome="calendario" />
-          <span>Prenota</span>
-        </a>
+        <a href={`tel:${locale.telefonoLink}`} class="barra-voce"><Icona nome="telefono" /> Chiama</a>
+        <a href="/prenota" class="barra-voce barra-prenota"><Icona nome="calendario" /> Prenota</a>
       </nav>
     )}
 
     <script>
-      import { stato, adessoRoma } from '../lib/orari';
+      import { stato, adessoRoma, orarioGiorno } from '../lib/orari';
 
       function aggiorna() {
         const s = stato();
         document.querySelectorAll<HTMLElement>('[data-stato]').forEach((el) => {
           el.dataset.aperto = String(s.aperto);
           const t = el.querySelector('[data-stato-testo]');
-          if (t) t.textContent = el.hasAttribute('data-insegna') ? s.dettaglio : `${s.aperto ? 'Aperto' : 'Chiuso'} · ${s.dettaglio}`;
+          if (t) t.textContent = `${s.aperto ? 'Aperto ora' : 'Chiuso'} · ${s.dettaglio}`;
         });
         const oggi = adessoRoma().giorno;
+        document.querySelectorAll('[data-oggi-orario]').forEach((el) => (el.textContent = orarioGiorno(oggi)));
         document.querySelectorAll<HTMLElement>('[data-giorno]').forEach((el) => {
           el.toggleAttribute('data-oggi', Number(el.dataset.giorno) === oggi);
         });
-        document.dispatchEvent(new CustomEvent('stato', { detail: s }));
       }
       aggiorna();
       setInterval(aggiorna, 60_000);
-    </script>
+
+      // Menu mobile
+      const bottone = document.querySelector<HTMLButtonElement>('[data-apri-menu]')!;
+      const pannello = document.querySelector<HTMLElement>('[data-menu-mobile]')!;
+      bottone.addEventListener('click', () => {
+        const aperto = bottone.getAttribute('aria-expanded') === 'true';
+        bottone.setAttribute('aria-expanded', String(!aperto));
+        pannello.hidden = aperto;
+        document.querySelector('[data-testata]')?.classList.toggle('menu-aperto', !aperto);
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !pannello.hidden) bottone.click();
+      });    </script>
   </body>
 </html>
 
@@ -208,246 +238,360 @@ const jsonLd = {
     left: 1rem;
     top: -4rem;
     z-index: 100;
-    background: var(--luce);
-    color: var(--notte-0);
+    background: var(--ink);
+    color: #fff;
     padding: 0.6rem 1rem;
-    border-radius: 8px;
-    font-weight: 700;
   }
   .salta:focus {
     top: 1rem;
   }
 
   .anteprima {
-    background: var(--notte-0);
-    color: var(--carta-2);
-    font-size: 0.875rem;
+    background: #fdf3d8;
+    color: #6b5313;
+    font-size: 0.85rem;
     text-align: center;
-    padding: 0.45rem var(--gutter);
-    border-bottom: 1px solid var(--notte-3);
+    padding: 0.4rem var(--gutter);
   }
 
-  .testata {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    background: color-mix(in oklab, var(--notte-1) 82%, transparent);
-    backdrop-filter: blur(14px) saturate(1.2);
-    -webkit-backdrop-filter: blur(14px) saturate(1.2);
-    border-bottom: 1px solid color-mix(in oklab, var(--notte-3) 70%, transparent);
+  /* ---------- Barra informazioni ---------- */
+  .info-barra {
+    background: var(--bg-scuro);
+    color: #e9e5dc;
+    font-size: 0.875rem;
   }
-
-  .testata-riga {
+  .info-riga {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 1.5rem;
-    min-height: 68px;
+    gap: 1rem;
+    min-height: 40px;
   }
-
-  .marchio {
+  .info-riga a {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.4rem;
     text-decoration: none;
-    color: var(--carta);
-    flex: none;
   }
-  .marchio-arca {
-    width: 38px;
-    height: auto;
-    color: var(--carta);
+  .info-riga a:hover {
+    text-decoration: underline;
   }
-  .marchio-nome {
-    font-family: var(--display);
-    font-weight: 800;
-    font-stretch: 78%;
-    font-size: 1.4rem;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
+  .info-riga :global(svg) {
+    width: 15px;
+    height: 15px;
+    opacity: 0.8;
   }
-
-  .nav {
-    margin-inline: auto;
-  }
-  .nav ul {
+  .info-dx {
     display: flex;
-    gap: 0.25rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .nav a {
-    display: block;
-    padding: 0.55rem 0.9rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-family: var(--display);
-    font-weight: 600;
-    font-stretch: 90%;
-    color: var(--carta-2);
-    transition: color 0.2s var(--ease), background-color 0.2s var(--ease);
-  }
-  .nav a:hover {
-    color: var(--carta);
-    background: var(--notte-2);
-  }
-  .nav a[aria-current='page'] {
-    color: var(--luce);
-  }
-
-  .testata-azioni {
-    display: flex;
+    gap: 1.6rem;
     align-items: center;
-    gap: 0.9rem;
   }
-  .testata-prenota {
-    --h: 44px;
-    padding-inline: 1.15em;
-    font-size: 1rem;
-  }
-
   .stato {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.9rem;
-    color: var(--carta-2);
+  }
+  .stato-punto {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #a39d92;
+  }
+  .stato[data-aperto='true'] .stato-punto {
+    background: #6fcf8e;
+  }
+  @media (max-width: 760px) {
+    .info-riga > a {
+      display: none;
+    }
+    .info-dx {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+
+  /* ---------- Intestazione ---------- */
+  .testata {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: #fff;
+    border-bottom: 1px solid var(--linea);
+  }
+  .testata-riga {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    min-height: 80px;
+  }
+  .marchio {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: var(--ink);
+    margin-right: auto;
+  }
+  .marchio-arca {
+    width: 40px;
+    color: var(--accento);
+    flex: none;
+  }
+  .marchio-testo {
+    display: grid;
+    line-height: 1.1;
+  }
+  .marchio-nome {
+    font-family: var(--serif);
+    font-size: 1.45rem;
     white-space: nowrap;
   }
-  .stato-luce {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: var(--carta-3);
+  .marchio-tipo {
+    font-size: 0.78rem;
+    color: var(--ink-3);
+    margin-top: 0.2rem;
+    white-space: nowrap;
   }
-  .stato[data-aperto='true'] {
-    color: var(--carta);
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
   }
-  .stato[data-aperto='true'] .stato-luce {
-    background: var(--giardino);
-    box-shadow: 0 0 0 4px color-mix(in oklab, var(--giardino) 25%, transparent), 0 0 12px var(--giardino);
+  .nav ul {
+    display: flex;
+    gap: 1.8rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nav ul a {
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--ink);
+    padding-block: 0.4rem;
+    border-bottom: 1.5px solid transparent;
+    transition: border-color 0.2s var(--ease);
+  }
+  .nav ul a:hover,
+  .nav ul a[aria-current='page'] {
+    border-bottom-color: var(--accento);
+  }
+
+  .apri-menu {
+    display: none;
+    width: 48px;
+    height: 48px;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    place-items: center;
+    margin-right: -10px;
+  }
+  .hamburger,
+  .hamburger::before,
+  .hamburger::after {
+    display: block;
+    width: 22px;
+    height: 1.5px;
+    background: var(--ink);
+    transition: transform 0.2s var(--ease), opacity 0.2s;
+  }
+  .hamburger {
+    position: relative;
+  }
+  .hamburger::before,
+  .hamburger::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+  .hamburger::before {
+    top: -7px;
+  }
+  .hamburger::after {
+    top: 7px;
+  }
+  .menu-aperto .hamburger {
+    background: transparent;
+  }
+  .menu-aperto .hamburger::before {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .menu-aperto .hamburger::after {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  .menu-mobile {
+    border-top: 1px solid var(--linea);
+    padding: 0.5rem var(--gutter) 1.5rem;
+    background: #fff;
+  }
+  .menu-mobile ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .menu-mobile li a {
+    display: block;
+    padding-block: 0.85rem;
+    border-bottom: 1px solid var(--linea);
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    text-decoration: none;
+  }
+  .menu-mobile-info {
+    margin-top: 1.2rem;
+    color: var(--ink-2);
+    font-size: 0.95rem;
   }
 
   @media (max-width: 900px) {
     .nav {
       display: none;
     }
-    .testata-azioni {
-      margin-left: auto;
+    .apri-menu {
+      display: grid;
+    }
+    .testata-riga {
+      min-height: 68px;
     }
   }
-  @media (max-width: 560px) {
-    .testata-prenota {
+  @media (min-width: 901px) {
+    .menu-mobile {
       display: none;
     }
-    .marchio-nome {
-      font-size: 1.25rem;
-    }
-    .stato {
-      font-size: 0.8rem;
-    }
-    .stato [data-stato-testo] {
-      max-width: 15ch;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+  }
+
+  /* Home: intestazione trasparente sopra la foto */
+  .sopra-foto {
+    position: absolute;
+    top: auto;
+    inset-inline: 0;
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+  .sopra-foto .marchio,
+  .sopra-foto .marchio-arca,
+  .sopra-foto .nav ul a {
+    color: #fff;
+  }
+  .sopra-foto .marchio-tipo {
+    color: rgba(255, 255, 255, 0.82);
+  }
+  .sopra-foto .nav ul a:hover,
+  .sopra-foto .nav ul a[aria-current='page'] {
+    border-bottom-color: #fff;
+  }
+  .sopra-foto .hamburger,
+  .sopra-foto .hamburger::before,
+  .sopra-foto .hamburger::after {
+    background: #fff;
+  }
+  .sopra-foto.menu-aperto {
+    background: #fff;
+  }
+  .sopra-foto.menu-aperto .marchio,
+  .sopra-foto.menu-aperto .marchio-arca {
+    color: var(--ink);
+  }
+  .sopra-foto.menu-aperto .marchio-arca {
+    color: var(--accento);
+  }
+  .sopra-foto.menu-aperto .marchio-tipo {
+    color: var(--ink-3);
+  }
+  .sopra-foto.menu-aperto .hamburger::before,
+  .sopra-foto.menu-aperto .hamburger::after {
+    background: var(--ink);
   }
 
   /* ---------- Piede ---------- */
   .piede {
-    background: var(--notte-0);
-    border-top: 1px solid var(--notte-3);
-    padding-top: clamp(56px, 8vw, 96px);
+    background: var(--bg-scuro);
+    color: #e9e5dc;
+    padding-top: clamp(56px, 7vw, 88px);
+    font-size: 0.95rem;
+  }
+  .piede a {
+    text-decoration-color: rgba(233, 229, 220, 0.35);
   }
   .piede-griglia {
     display: grid;
-    grid-template-columns: 1.3fr 1fr 1fr;
-    gap: 3rem;
-  }
-  .piede-arca {
-    width: 56px;
-    color: var(--carta);
-    margin-bottom: 1rem;
+    grid-template-columns: 1.3fr 1.2fr 1.2fr 0.8fr;
+    gap: 2.5rem;
   }
   .piede-nome {
-    font-family: var(--display);
-    font-weight: 800;
-    font-stretch: 78%;
-    font-size: 2rem;
-    line-height: 1;
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    color: #fff;
   }
-  .piede-tipo {
-    color: var(--carta-2);
-    margin-top: 0.4rem;
-  }
-  .piede-indirizzo {
-    margin-top: 1.2rem;
-    color: var(--carta-2);
-    max-width: 30ch;
+  .piede-testo {
+    margin-top: 0.6rem;
+    color: #bfb9ad;
+    max-width: 34ch;
   }
   .piede-titolo {
-    font-size: 1.05rem;
-    font-stretch: 90%;
-    font-weight: 700;
-    color: var(--luce);
-    margin-bottom: 1rem;
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.8rem;
   }
   .piede-orari {
     margin: 0;
     display: grid;
-    gap: 0.35rem;
+    gap: 0.2rem;
+    color: #bfb9ad;
     font-variant-numeric: tabular-nums;
   }
   .piede-orari div {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
-    color: var(--carta-2);
+    max-width: 240px;
   }
   .piede-orari dd {
     margin: 0;
   }
   .piede-orari div[data-oggi] {
-    color: var(--luce-forte);
-    font-weight: 700;
+    color: #fff;
+    font-weight: 600;
   }
   .piede-lista {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 0.6rem;
+    gap: 0.35rem;
   }
   .piede-lista a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
+    color: #bfb9ad;
     text-decoration: none;
-    color: var(--carta-2);
-    min-height: 32px;
   }
   .piede-lista a:hover {
-    color: var(--carta);
-  }
-  .piede-lista :global(svg) {
-    width: 20px;
-    color: var(--luce);
+    color: #fff;
   }
   .piede-fondo {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 0.5rem 2rem;
-    margin-top: clamp(48px, 7vw, 80px);
-    padding-block: 1.5rem;
-    border-top: 1px solid var(--notte-3);
-    color: var(--carta-3);
-    font-size: 0.9rem;
+    margin-top: clamp(40px, 6vw, 64px);
+    padding-block: 1.4rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    color: #a39d92;
+    font-size: 0.85rem;
   }
-  @media (max-width: 800px) {
+  @media (max-width: 900px) {
+    .piede-griglia {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 560px) {
     .piede-griglia {
       grid-template-columns: 1fr;
-      gap: 2.5rem;
+      gap: 2rem;
     }
   }
 
@@ -457,43 +601,38 @@ const jsonLd = {
   }
   @media (max-width: 760px) {
     body.con-barra {
-      padding-bottom: calc(76px + env(safe-area-inset-bottom));
+      padding-bottom: calc(68px + env(safe-area-inset-bottom));
     }
     .barra {
       position: fixed;
       inset: auto 0 0 0;
       z-index: 60;
       display: grid;
-      grid-template-columns: 1fr 1fr 1.35fr;
+      grid-template-columns: 1fr 1fr;
       gap: 8px;
-      padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
-      background: color-mix(in oklab, var(--notte-0) 88%, transparent);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-top: 1px solid var(--notte-3);
+      padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+      background: #fff;
+      border-top: 1px solid var(--linea);
     }
     .barra-voce {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.45rem;
-      min-height: 56px;
-      border-radius: 12px;
+      gap: 0.5rem;
+      min-height: 50px;
+      border-radius: var(--raggio);
       text-decoration: none;
-      font-family: var(--display);
-      font-weight: 700;
-      font-stretch: 88%;
-      font-size: 1.05rem;
-      color: var(--carta);
-      background: var(--notte-2);
+      font-weight: 600;
+      border: 1px solid var(--ink);
     }
     .barra-voce :global(svg) {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
     }
     .barra-prenota {
-      background: var(--luce);
-      color: var(--notte-0);
+      background: var(--accento);
+      border-color: var(--accento);
+      color: #fff;
     }
   }
 </style>

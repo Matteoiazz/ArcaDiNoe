@@ -8,7 +8,7 @@ Sito della pizzeria, ristorante e griglieria **L'Arca di Noè** a Trenta, Casali
 
 | Pagina | Contenuto |
 | --- | --- |
-| `/` | La vista su Cosenza (cielo animato) e l'insegna APERTO/CHIUSO in tempo reale. Poi le tre cucine, i piatti, il posto, gli eventi e gli orari |
+| `/` | Foto di apertura, informazioni pratiche (orari con stato aperto/chiuso, indirizzo, telefono), presentazione del locale, la cucina, sale ed eventi, orari e come arrivare |
 | `/menu` | Il menu per categorie, con ricerca, filtri (vegetariano, senza glutine) e barra delle categorie sempre visibile. Si può usare dal QR code al tavolo |
 | `/prenota` | Prenotazione di un tavolo: propone solo giorni e orari di apertura, poi invia su WhatsApp o prepara la chiamata |
 | `/eventi` | Comunioni, compleanni, cene aziendali, con il modulo di richiesta |

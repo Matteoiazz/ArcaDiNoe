@@ -90,7 +90,7 @@ const conWhatsapp = Boolean(locale.whatsapp);
   </div>
 
   <div class="invio">
-    <button class="btn btn-luce" type="submit">
+    <button class="btn btn-pieno" type="submit">
       {conWhatsapp ? <><Icona nome="chat" /> Invia su WhatsApp</> : <><Icona nome="freccia" /> Prepara la richiesta</>}
     </button>
     <p class="invio-nota">
@@ -104,8 +104,8 @@ const conWhatsapp = Boolean(locale.whatsapp);
     <p class="esito-titolo" data-esito-titolo></p>
     <pre class="esito-messaggio" data-esito-messaggio></pre>
     <div class="esito-azioni">
-      <a class="btn btn-luce" href={`tel:${locale.telefonoLink}`}><Icona nome="telefono" /> Chiama {locale.telefono}</a>
-      <button class="btn btn-linea" type="button" data-copia><Icona nome="copia" /> <span>Copia il testo</span></button>
+      <a class="btn btn-pieno" href={`tel:${locale.telefonoLink}`}><Icona nome="telefono" /> Chiama {locale.telefono}</a>
+      <button class="btn btn-bordo" type="button" data-copia><Icona nome="copia" /> <span>Copia il testo</span></button>
     </div>
   </div>
 </form>
@@ -290,7 +290,7 @@ const conWhatsapp = Boolean(locale.whatsapp);
   .griglia {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.4rem 1.2rem;
+    gap: 1.3rem 1.2rem;
   }
   .largo {
     grid-column: 1 / -1;
@@ -301,42 +301,42 @@ const conWhatsapp = Boolean(locale.whatsapp);
     }
   }
   .facoltativo {
-    color: var(--carta-3);
+    color: var(--ink-3);
     font-weight: 400;
   }
 
   .contatore {
     display: grid;
-    grid-template-columns: 52px 1fr 52px;
-    border: 1.5px solid var(--notte-4);
-    border-radius: 10px;
+    grid-template-columns: 48px 1fr 48px;
+    border: 1px solid #cfc8bc;
+    border-radius: var(--raggio);
     overflow: hidden;
-    background: var(--notte-0);
+    background: #fff;
   }
   .contatore:focus-within {
-    border-color: var(--luce);
+    border-color: var(--accento);
+    box-shadow: 0 0 0 3px var(--accento-chiaro);
   }
   .contatore input {
     border: 0;
     border-radius: 0;
     text-align: center;
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 1.3rem;
+    font-weight: 600;
+    font-size: 1.1rem;
     font-variant-numeric: tabular-nums;
     box-shadow: none;
     min-width: 0;
   }
   .contatore button {
     border: 0;
-    background: var(--notte-2);
-    color: var(--luce);
-    font-size: 1.5rem;
+    background: var(--bg-alt);
+    color: var(--ink);
+    font-size: 1.3rem;
     cursor: pointer;
-    min-height: 52px;
+    min-height: 46px;
   }
   .contatore button:hover {
-    background: var(--notte-3);
+    background: var(--linea);
   }
 
   .zona {
@@ -348,7 +348,7 @@ const conWhatsapp = Boolean(locale.whatsapp);
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0.5rem;
-    margin-top: 0.45rem;
+    margin-top: 0.4rem;
   }
   @media (max-width: 560px) {
     .scelte {
@@ -368,26 +368,26 @@ const conWhatsapp = Boolean(locale.whatsapp);
   .scelta span {
     display: grid;
     place-items: center;
-    min-height: 52px;
+    min-height: 48px;
     padding: 0.4rem;
-    border: 1.5px solid var(--notte-4);
-    border-radius: 10px;
+    border: 1px solid #cfc8bc;
+    border-radius: var(--raggio);
     text-align: center;
-    color: var(--carta-2);
-    font-size: 1rem;
-    transition: all 0.2s var(--ease);
+    color: var(--ink-2);
+    font-size: 0.95rem;
+    transition: all 0.15s var(--ease);
   }
   .scelta:hover span {
-    border-color: var(--carta-3);
+    border-color: var(--ink-3);
   }
   .scelta input:checked + span {
-    border-color: var(--luce);
-    color: var(--notte-0);
-    background: var(--luce);
-    font-weight: 700;
+    border-color: var(--accento);
+    color: #fff;
+    background: var(--accento);
+    font-weight: 600;
   }
   .scelta input:focus-visible + span {
-    outline: 3px solid var(--luce);
+    outline: 2px solid var(--accento);
     outline-offset: 3px;
   }
 
@@ -398,8 +398,8 @@ const conWhatsapp = Boolean(locale.whatsapp);
     gap: 1rem 1.4rem;
   }
   .invio-nota {
-    color: var(--carta-2);
-    font-size: 0.95rem;
+    color: var(--ink-3);
+    font-size: 0.925rem;
     max-width: 44ch;
   }
   @media (max-width: 560px) {
@@ -410,30 +410,26 @@ const conWhatsapp = Boolean(locale.whatsapp);
 
   .esito {
     padding: clamp(1.4rem, 3vw, 2rem);
-    border-radius: var(--raggio);
-    background: var(--notte-0);
-    box-shadow: 0 0 0 1.5px var(--luce), 0 20px 60px -30px rgba(244, 197, 106, 0.6);
+    background: var(--bg-alt);
+    border-top: 3px solid var(--accento);
   }
   .esito:focus {
     outline: none;
   }
   .esito-titolo {
-    font-family: var(--display);
-    font-weight: 700;
-    font-stretch: 88%;
+    font-family: var(--serif);
     font-size: 1.3rem;
-    line-height: 1.25;
+    line-height: 1.3;
   }
   .esito-messaggio {
     margin: 1rem 0 0;
     padding: 1rem;
-    border-radius: 10px;
-    background: var(--notte-2);
-    font-family: var(--testo);
-    font-size: 1rem;
+    background: #fff;
+    border: 1px solid var(--linea);
+    font-family: var(--sans);
+    font-size: 0.975rem;
     line-height: 1.55;
     white-space: pre-wrap;
-    color: var(--carta);
   }
   .esito-azioni {
     display: flex;

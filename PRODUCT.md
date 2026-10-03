@@ -47,6 +47,7 @@ Facts other local pizzerias cannot copy: the panoramic view over the city of Cos
 
 - Name: "L'Arca di Noè". The public listings also use "Pizzeria Ristorante L'Arca di Noè".
 - There is no known logo, palette or brand asset, so the identity is created here and has to be presentable to the owner.
+- **Binding style (from the user, 2026-10-03):** professional, minimal and functional, like a well-made restaurant website. No spectacular effects. It must be beautiful but not exaggerated. The place has large rooms, so the site sells space, food and practicality. The user rejected a first "night sky" direction as too "AI site". References: the structure of established Italian pizzeria sites (Berberè, Pepe in Grani), with a clear header and Prenota button, a large photo, practical info, then sections.
 
 ## Evidence on Hand
 
