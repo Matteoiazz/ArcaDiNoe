@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icona from '../components/Icona.astro';
-import { locale, indirizzoCompleto, mapsDirections, appleMapsLink, mapsEmbed } from '../data/locale';
+import { locale, indirizzoCompleto, mapsDirections, appleMapsLink, mapsEmbed, prenotaOnline } from '../data/locale';
 import { orarioGiorno } from '../lib/orari';
 
 const giorni = [1, 2, 3, 4, 5, 6, 0];
@@ -25,7 +25,7 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
         <div>
           <h2>Contatti</h2>
           <p>Telefono: <a href={`tel:${locale.telefonoLink}`}>{locale.telefono}</a></p>
-          <p>Prenotazioni anche <a href="/prenota">online</a>.</p>
+          <p>{prenotaOnline ? <>Prenotazioni anche <a href="/prenota">online</a>.</> : 'Le prenotazioni si fanno per telefono.'}</p>
         </div>
         <div>
           <h2>Orari</h2>

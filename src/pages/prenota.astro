@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Richiesta from '../components/Richiesta.astro';
 import Icona from '../components/Icona.astro';
-import { locale } from '../data/locale';
+import { locale, prenotaOnline } from '../data/locale';
 import { orarioGiorno } from '../lib/orari';
 
 const giorni = [1, 2, 3, 4, 5, 6, 0];
@@ -11,21 +11,43 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
   <div class="contenitore pagina">
     <div>
       <h1>Prenota un <em>tavolo</em></h1>
-      <p class="lead">
-        Indicate giorno, orario e numero di persone: vi confermeremo la prenotazione il prima possibile. Per gruppi numerosi
-        e feste visitate la pagina <a href="/eventi">Sale ed eventi</a>.
-      </p>
-      <div class="modulo">
-        <Richiesta tipo="tavolo" />
-      </div>
+      {prenotaOnline ? (
+        <>
+          <p class="lead">
+            Indicate giorno, orario e numero di persone: vi confermeremo la prenotazione il prima possibile. Per gruppi
+            numerosi e feste visitate la pagina <a href="/eventi">Sale ed eventi</a>.
+          </p>
+          <div class="modulo">
+            <Richiesta tipo="tavolo" />
+          </div>
+        </>
+      ) : (
+        <>
+          <p class="lead">
+            Le prenotazioni si fanno per telefono: chiamateci negli orari di apertura e vi troviamo il tavolo. Il venerdì e
+            il sabato sera conviene prenotare con qualche giorno di anticipo.
+          </p>
+          <a class="chiama" href={`tel:${locale.telefonoLink}`}>
+            <Icona nome="telefono" />
+            <span>{locale.telefono}</span>
+          </a>
+          <p class="stato stato-grande" data-stato><span data-stato-testo></span></p>
+          <p class="nota-gruppi">
+            Per comunioni, compleanni e cene di gruppo trovate tutte le informazioni nella pagina{' '}
+            <a href="/eventi">Sale ed eventi</a>.
+          </p>
+        </>
+      )}
     </div>
 
     <aside class="laterale">
-      <div class="riquadro">
-        <h2>Preferite telefonare?</h2>
-        <a class="telefono" href={`tel:${locale.telefonoLink}`}><Icona nome="telefono" /> {locale.telefono}</a>
-        <p class="stato" data-stato><span data-stato-testo></span></p>
-      </div>
+      {prenotaOnline && (
+        <div class="riquadro">
+          <h2>Preferite telefonare?</h2>
+          <a class="telefono" href={`tel:${locale.telefonoLink}`}><Icona nome="telefono" /> {locale.telefono}</a>
+          <p class="stato" data-stato><span data-stato-testo></span></p>
+        </div>
+      )}
       <div class="riquadro">
         <h2>Orari</h2>
         <dl class="orari">
@@ -61,6 +83,37 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
   }
   .modulo {
     margin-top: 2.2rem;
+  }
+  .chiama {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin-top: 2.4rem;
+    padding: 1.1rem 2rem 1.1rem 1.6rem;
+    border-radius: 999px;
+    background: var(--accento);
+    color: var(--bg);
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    line-height: 1;
+    text-decoration: none;
+    transition: background-color 0.2s var(--ease);
+  }
+  .chiama:hover {
+    background: var(--accento-hover);
+  }
+  .chiama :global(svg) {
+    width: 0.6em;
+    height: 0.6em;
+  }
+  .stato-grande {
+    margin-top: 1rem;
+    font-size: 1rem;
+  }
+  .nota-gruppi {
+    margin-top: 2.4rem;
+    color: var(--ink-2);
+    max-width: 52ch;
   }
   .laterale {
     position: sticky;
@@ -100,7 +153,38 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
     color: var(--aperto);
   }
   @media (max-width: 900px) {
-    .laterale {
+    .chiama {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin-top: 2.4rem;
+    padding: 1.1rem 2rem 1.1rem 1.6rem;
+    border-radius: 999px;
+    background: var(--accento);
+    color: var(--bg);
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    line-height: 1;
+    text-decoration: none;
+    transition: background-color 0.2s var(--ease);
+  }
+  .chiama:hover {
+    background: var(--accento-hover);
+  }
+  .chiama :global(svg) {
+    width: 0.6em;
+    height: 0.6em;
+  }
+  .stato-grande {
+    margin-top: 1rem;
+    font-size: 1rem;
+  }
+  .nota-gruppi {
+    margin-top: 2.4rem;
+    color: var(--ink-2);
+    max-width: 52ch;
+  }
+  .laterale {
       position: static;
     }
   }

@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icona from '../components/Icona.astro';
-import { locale } from '../data/locale';
+import { locale, prenotaHref, prenotaOnline } from '../data/locale';
 import { menu, etichette, euro } from '../data/menu';
 ---
 <Base
@@ -77,11 +77,11 @@ import { menu, etichette, euro } from '../data/menu';
     <div class="cta">
       <div>
         <h2>Vi aspettiamo a tavola</h2>
-        <p>Prenotate online o chiamate. Le pizze si possono ordinare anche da asporto.</p>
+        <p>{prenotaOnline ? 'Prenotate online o chiamate.' : 'Prenotate con una telefonata.'} Le pizze si possono ordinare anche da asporto.</p>
       </div>
       <div class="cta-azioni">
-        <a class="btn btn-pieno" href="/prenota">Prenota un tavolo</a>
-        <a class="btn btn-bordo" href={`tel:${locale.telefonoLink}`}><Icona nome="telefono" /> {locale.telefono}</a>
+        {prenotaOnline && <a class="btn btn-pieno" href="/prenota">Prenota un tavolo</a>}
+        <a class:list={['btn', prenotaOnline ? 'btn-bordo' : 'btn-pieno']} href={`tel:${locale.telefonoLink}`}><Icona nome="telefono" /> {locale.telefono}</a>
       </div>
     </div>
   </div>

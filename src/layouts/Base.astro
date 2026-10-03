@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 import Icona from '../components/Icona.astro';
-import { locale, indirizzoCompleto, mapsDirections } from '../data/locale';
+import { locale, indirizzoCompleto, mapsDirections, prenotaHref, prenotaOnline } from '../data/locale';
 import { orarioGiorno } from '../lib/orari';
 
 interface Props {
@@ -112,7 +112,7 @@ const jsonLd = {
 
         <div class="testata-dx">
           <span class="stato" data-stato><span class="stato-punto" aria-hidden="true"></span><span data-stato-testo>Orari</span></span>
-          <a class="btn btn-pieno testata-prenota" href="/prenota">Prenota</a>
+          <a class="btn btn-pieno testata-prenota" href={prenotaHref}>{prenotaOnline ? 'Prenota' : <><Icona nome="telefono" /> Prenota</>}</a>
         </div>
       </div>
 
@@ -120,7 +120,7 @@ const jsonLd = {
         <ul>
           <li><a href="/">Home</a></li>
           {voci.map((v) => <li><a href={v.href}>{v.testo}</a></li>)}
-          <li><a href="/prenota">Prenota un tavolo</a></li>
+          <li><a href={prenotaHref}>{prenotaOnline ? 'Prenota un tavolo' : `Prenota: ${locale.telefono}`}</a></li>
         </ul>
         <p class="menu-mobile-info">
           <a href={`tel:${locale.telefonoLink}`}>{locale.telefono}</a><br />
@@ -143,7 +143,7 @@ const jsonLd = {
           </div>
           <div>
             <h2 class="etichetta-mini">Prenotazioni</h2>
-            <p><a href={`tel:${locale.telefonoLink}`}>{locale.telefono}</a><br /><a href="/prenota">Prenota online</a></p>
+            <p><a href={`tel:${locale.telefonoLink}`}>{locale.telefono}</a>{prenotaOnline && <><br /><a href="/prenota">Prenota online</a></>}</p>
           </div>
           <div>
             <h2 class="etichetta-mini">Orari</h2>
@@ -173,8 +173,14 @@ const jsonLd = {
 
     {!senzaBarra && (
       <nav class="barra" aria-label="Azioni rapide">
-        <a href={`tel:${locale.telefonoLink}`} class="btn btn-bordo"><Icona nome="telefono" /> Chiama</a>
-        <a href="/prenota" class="btn btn-pieno">Prenota un tavolo</a>
+        {prenotaOnline ? (
+          <>
+            <a href={`tel:${locale.telefonoLink}`} class="btn btn-bordo"><Icona nome="telefono" /> Chiama</a>
+            <a href="/prenota" class="btn btn-pieno">Prenota un tavolo</a>
+          </>
+        ) : (
+          <a href={prenotaHref} class="btn btn-pieno barra-unico"><Icona nome="telefono" /> Chiama per prenotare</a>
+        )}
       </nav>
     )}
 
@@ -406,6 +412,9 @@ const jsonLd = {
     .apri-menu-testo {
       display: none;
     }
+    .testata-prenota :global(svg) {
+      display: none;
+    }
     .testata-prenota {
       min-height: 38px;
       padding-inline: 1em;
@@ -537,6 +546,9 @@ const jsonLd = {
       padding: 9px 12px calc(9px + env(safe-area-inset-bottom));
       background: var(--bg);
       border-top: 1px solid var(--linea);
+    }
+    .barra-unico {
+      grid-column: 1 / -1;
     }
     .barra .btn {
       min-height: 50px;

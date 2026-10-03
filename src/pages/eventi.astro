@@ -2,7 +2,8 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Richiesta from '../components/Richiesta.astro';
-import { locale } from '../data/locale';
+import { locale, prenotaOnline } from '../data/locale';
+import Icona from '../components/Icona.astro';
 import fotoCosenza from '../assets/foto/cosenza.jpg';
 
 const occasioni = [
@@ -66,10 +67,22 @@ const servizi = [
       </div>
       <div id="richiesta" class="richiesta-box">
         <h2 class="titolo-sezione">Richiedi una <em>proposta</em></h2>
-        <p class="lead">Oppure chiamate il <a href={`tel:${locale.telefonoLink}`}>{locale.telefono}</a>.</p>
-        <div class="modulo">
-          <Richiesta tipo="evento" />
-        </div>
+        {prenotaOnline ? (
+          <>
+            <p class="lead">Oppure chiamate il <a href={`tel:${locale.telefonoLink}`}>{locale.telefono}</a>.</p>
+            <div class="modulo">
+              <Richiesta tipo="evento" />
+            </div>
+          </>
+        ) : (
+          <>
+            <p class="lead">
+              Chiamateci e raccontateci la festa: data, numero di invitati e che tipo di menu avete in mente. Vi facciamo
+              una proposta e, se volete, vi mostriamo le sale.
+            </p>
+            <a class="btn btn-pieno chiama-evento" href={`tel:${locale.telefonoLink}`}><Icona nome="telefono" /> Chiama il {locale.telefono}</a>
+          </>
+        )}
       </div>
     </div>
   </section>
@@ -159,5 +172,8 @@ const servizi = [
   }
   .modulo {
     margin-top: 2rem;
+  }
+  .chiama-evento {
+    margin-top: 1.8rem;
   }
 </style>

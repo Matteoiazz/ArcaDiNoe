@@ -6,7 +6,7 @@ Il sito è una demo costruita con dati pubblici. Prima della consegna al locale 
 
 - [ ] **Civico** di Via Catena: gli elenchi online riportano 31, 34 e 54.
 - [ ] **Orari** di tutti i giorni. In particolare, la domenica è aperto tutto il giorno (12–01) o fa pranzo e cena separati?
-- [ ] **Numero WhatsApp** (cellulare). Appena inserito, il modulo di prenotazione invia su WhatsApp invece di proporre la chiamata.
+- [ ] **Numero WhatsApp** (cellulare). Ora tutti i tasti "Prenota" avviano la telefonata. Inserendo il numero in `whatsapp` compaiono da soli i moduli di prenotazione e di richiesta eventi, che inviano il messaggio su WhatsApp.
 - [ ] **Coordinate esatte** del locale (`geo`).
 - [ ] Link a **Facebook / Instagram**, se esistono.
 - [ ] **Elenco servizi**: confermare TV per lo sport, Wi‑Fi, asporto, accesso disabili e musica dal vivo.

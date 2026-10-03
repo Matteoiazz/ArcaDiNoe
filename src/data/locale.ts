@@ -70,6 +70,10 @@ export const locale = {
   ],
 } as const;
 
+/** Con il numero WhatsApp si prenota dal modulo online; senza, ogni tasto Prenota avvia la chiamata. */
+export const prenotaOnline = Boolean(locale.whatsapp);
+export const prenotaHref = prenotaOnline ? '/prenota' : `tel:${locale.telefonoLink}`;
+
 export const indirizzoBreve = `${locale.indirizzo.via}, ${locale.indirizzo.frazione}`;
 export const indirizzoCompleto = `${locale.indirizzo.via}, ${locale.indirizzo.frazione} – ${locale.indirizzo.cap} ${locale.indirizzo.comune} (${locale.indirizzo.provincia})`;
 export const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locale.mapsQuery)}`;

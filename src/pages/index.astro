@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icona from '../components/Icona.astro';
-import { locale, indirizzoCompleto, mapsDirections } from '../data/locale';
+import { locale, indirizzoCompleto, mapsDirections, prenotaHref, prenotaOnline } from '../data/locale';
 import { orarioGiorno } from '../lib/orari';
 
 import fotoForno from '../assets/foto/forno.jpg';
@@ -39,7 +39,7 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
       <h1 id="titolo-home">Pizza, brace e <em>cucina calabrese</em></h1>
       <p class="etichetta-mini">Trenta · Casali del Manco · sopra Cosenza</p>
       <div class="apertura-azioni">
-        <a class="btn btn-pieno" href="/prenota">Prenota un tavolo</a>
+        <a class="btn btn-pieno" href={prenotaHref}>{prenotaOnline ? 'Prenota un tavolo' : <><Icona nome="telefono" /> Chiama per prenotare</>}</a>
         <a class="btn btn-bordo-chiaro" href="/menu">Guarda il menu</a>
       </div>
     </div>
@@ -130,8 +130,8 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
           <details>
             <summary>Prenotazioni</summary>
             <p>
-              Potete prenotare <a href="/prenota">online</a> o chiamando il
-              <a href={`tel:${locale.telefonoLink}`}>{locale.telefono}</a>. Il venerdì e il sabato sera consigliamo di
+              {prenotaOnline ? <>Potete prenotare <a href="/prenota">online</a> o chiamando il</> : 'Le prenotazioni si fanno per telefono, al'}{' '}
+              <a href={`tel:${locale.telefonoLink}`}>{locale.telefono}</a>, negli orari di apertura. Il venerdì e il sabato sera consigliamo di
               prenotare con qualche giorno di anticipo.
             </p>
           </details>
@@ -164,7 +164,7 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
         </div>
 
         <div class="info-azioni">
-          <a class="btn btn-pieno" href="/prenota">Prenota un tavolo</a>
+          <a class="btn btn-pieno" href={prenotaHref}>{prenotaOnline ? 'Prenota un tavolo' : <><Icona nome="telefono" /> Chiama per prenotare</>}</a>
           <a class="btn btn-bordo" href={mapsDirections} target="_blank" rel="noopener"><Icona nome="pin" /> Indicazioni</a>
         </div>
       </div>
