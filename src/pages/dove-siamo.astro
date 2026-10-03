@@ -9,7 +9,7 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
 <Base titolo="Dove siamo" descrizione={`L’Arca di Noè: ${indirizzoCompleto}. Indicazioni stradali, orari e parcheggio privato. Telefono ${locale.telefono}.`}>
   <div class="contenitore pagina">
     <div>
-      <h1>Dove siamo</h1>
+      <h1>Dove <em>siamo</em></h1>
       <p class="indirizzo">{indirizzoCompleto}</p>
       <p class="lead">
         Siamo sulla collina di Trenta, nel comune di Casali del Manco, a pochi minuti da Cosenza salendo verso la Sila.
@@ -84,12 +84,13 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
     }
   }
   h1 {
-    font-size: clamp(2.4rem, 5vw, 3.4rem);
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    line-height: 0.95;
   }
   .indirizzo {
     margin: 1rem 0 0.8rem;
     font-family: var(--serif);
-    font-size: 1.4rem;
+    font-size: 1.9rem;
     line-height: 1.35;
   }
   .azioni {
@@ -136,6 +137,7 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
     position: sticky;
     top: 110px;
     aspect-ratio: 4 / 5;
+    border-radius: var(--raggio-foto);
     background: var(--bg-alt);
     overflow: hidden;
   }

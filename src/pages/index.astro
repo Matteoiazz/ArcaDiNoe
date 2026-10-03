@@ -10,36 +10,22 @@ import fotoCosenza from '../assets/foto/cosenza.jpg';
 import fotoMargherita from '../assets/foto/margherita.jpg';
 import fotoPorcini from '../assets/foto/porcini.jpg';
 import fotoPesce from '../assets/foto/pesce.jpg';
+import fotoGriglia from '../assets/foto/griglia.jpg';
+import fotoTiramisu from '../assets/foto/tiramisu.jpg';
 
 const cucine = [
-  {
-    foto: fotoMargherita,
-    alt: 'Pizza margherita con basilico',
-    titolo: 'Pizzeria',
-    testo: 'Pizze cotte nel forno a legna, dalle classiche alle specialità calabresi con ’nduja, salsiccia e porcini. Su richiesta anche con impasto senza glutine.',
-    link: '/menu#pizze-rosse',
-  },
-  {
-    foto: fotoPorcini,
-    alt: 'Pasta fresca con funghi porcini',
-    titolo: 'Cucina',
-    testo: 'Antipasti della casa, primi della tradizione cosentina e piatti di montagna: funghi porcini della Sila, patate ’mpacchiuse, pasta fatta a mano.',
-    link: '/menu#primi',
-  },
-  {
-    foto: fotoPesce,
-    alt: 'Grigliata di pesce con gamberoni e calamari',
-    titolo: 'Griglia',
-    testo: 'Carne calabrese e pesce cotti alla brace: grigliate miste da dividere, tagliata di manzo, salsiccia, calamari e gamberoni.',
-    link: '/menu#griglia',
-  },
+  { foto: fotoMargherita, alt: 'Pizza margherita con basilico', titolo: 'La pizzeria', testo: 'Forno a legna, impasti leggeri e le specialità calabresi.', link: '/menu#pizze-rosse' },
+  { foto: fotoPorcini, alt: 'Pasta fresca con funghi porcini', titolo: 'La cucina', testo: 'Primi della tradizione e i porcini della Sila.', link: '/menu#primi' },
+  { foto: fotoGriglia, alt: 'Salsicce sulla brace', titolo: 'La brace', testo: 'Carne calabrese e grigliate miste da dividere.', link: '/menu#griglia' },
+  { foto: fotoPesce, alt: 'Grigliata di pesce con gamberoni e calamari', titolo: 'Il pesce', testo: 'Grigliata di pesce, calamari e gamberoni.', link: '/menu#griglia' },
+  { foto: fotoTiramisu, alt: 'Una fetta di tiramisù', titolo: 'I dolci', testo: 'Tiramisù della casa, tartufo di Pizzo, sorbetto.', link: '/menu#dolci' },
 ];
 
 const spazi = [
-  { titolo: 'Sale interne', testo: 'Ampie e climatizzate, adatte sia alla cena in famiglia sia ai grandi gruppi.' },
-  { titolo: 'Veranda', testo: 'Coperta e fresca anche nelle sere d’estate, con la vista sulla valle.' },
-  { titolo: 'Giardino', testo: 'Spazio all’aperto per cenare in estate e far giocare i bambini.' },
-  { titolo: 'Parcheggio privato', testo: 'Ampio, all’ingresso del locale, per clienti e invitati.' },
+  { titolo: 'Sale interne', testo: 'Ampie e climatizzate, per la famiglia e per i grandi gruppi.' },
+  { titolo: 'Veranda', testo: 'Coperta e fresca nelle sere d’estate, affacciata sulla valle.' },
+  { titolo: 'Giardino', testo: 'Per cenare all’aperto e far giocare i bambini.' },
+  { titolo: 'Parcheggio', testo: 'Privato e ampio, proprio all’ingresso.' },
 ];
 
 const giorni = [1, 2, 3, 4, 5, 6, 0];
@@ -47,149 +33,144 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
 <Base sopraFoto>
   <!-- Apertura -->
   <section class="apertura" aria-labelledby="titolo-home">
-    <Image class="apertura-foto" src={fotoForno} alt="" widths={[800, 1280, 1920]} sizes="100vw" loading="eager" fetchpriority="high" quality={72} />
+    <Image class="apertura-foto" src={fotoForno} alt="" widths={[800, 1280, 1920]} sizes="100vw" loading="eager" fetchpriority="high" quality={75} />
     <div class="apertura-velo" aria-hidden="true"></div>
-    <div class="contenitore apertura-testo">
-      <h1 id="titolo-home">Pizzeria, ristorante e griglieria a Trenta, sopra Cosenza</h1>
-      <p>Forno a legna, cucina calabrese e brace. Sale ampie, giardino e veranda con vista sulla valle.</p>
+    <div class="apertura-testo">
+      <h1 id="titolo-home">Pizza, brace e <em>cucina calabrese</em></h1>
+      <p class="etichetta-mini">Trenta · Casali del Manco · sopra Cosenza</p>
       <div class="apertura-azioni">
-        <a class="btn btn-chiaro" href="/prenota">Prenota un tavolo</a>
+        <a class="btn btn-pieno" href="/prenota">Prenota un tavolo</a>
         <a class="btn btn-bordo-chiaro" href="/menu">Guarda il menu</a>
       </div>
     </div>
   </section>
 
-  <!-- Informazioni pratiche -->
-  <section class="pratiche" aria-label="Informazioni pratiche">
-    <div class="contenitore pratiche-griglia">
-      <div class="pratica">
-        <Icona nome="orologio" />
-        <div>
-          <h2>Orari</h2>
-          <p data-stato class="pratica-stato"><span data-stato-testo>Aperti da martedì a domenica</span></p>
-          <p>Oggi: <span data-oggi-orario>{orarioGiorno(new Date().getDay())}</span></p>
-          <a class="link-freccia" href="#titolo-orari">Tutti gli orari <Icona nome="freccia" /></a>
-        </div>
-      </div>
-      <div class="pratica">
-        <Icona nome="pin" />
-        <div>
-          <h2>Indirizzo</h2>
-          <p>{indirizzoCompleto}</p>
-          <a class="link-freccia" href={mapsDirections} target="_blank" rel="noopener">Indicazioni stradali <Icona nome="freccia" /></a>
-        </div>
-      </div>
-      <div class="pratica">
-        <Icona nome="telefono" />
-        <div>
-          <h2>Prenotazioni</h2>
-          <p><a class="pratica-tel" href={`tel:${locale.telefonoLink}`}>{locale.telefono}</a></p>
-          <a class="link-freccia" href="/prenota">Prenota online <Icona nome="freccia" /></a>
-        </div>
-      </div>
+  <!-- Benvenuto -->
+  <section class="benvenuto">
+    <div class="contenitore">
+      <p class="benvenuto-testo">
+        Sulla collina di Trenta, con Cosenza ai piedi, l’Arca di Noè è il posto dove si sta a tavola{' '}
+        <em>tutti insieme</em>: la pizza del forno a legna, i piatti della cucina calabrese e la brace, sotto lo stesso tetto.
+      </p>
+      <ul class="fatti etichetta-mini">
+        <li>Sale ampie</li>
+        <li>Giardino e veranda</li>
+        <li>Vista su Cosenza</li>
+        <li>Parcheggio privato</li>
+      </ul>
     </div>
   </section>
 
-  <!-- Il locale -->
-  <section class="sezione">
-    <div class="contenitore due-colonne">
-      <div class="testo-corrente">
-        <h2 class="titolo-sezione">Benvenuti all’Arca di Noè</h2>
-        <p class="lead">
-          Un locale di famiglia sulla collina di Trenta, a pochi minuti da Cosenza, dove si viene per una pizza tra amici,
-          una cena con i parenti o una festa importante.
+  <!-- Le cucine -->
+  <section class="cucine-sez" aria-labelledby="t-cucine">
+    <div class="contenitore cucine-testa">
+      <h2 id="t-cucine" class="titolo-sezione">Cosa si mangia <em>all’Arca</em></h2>
+      <a class="btn btn-bordo" href="/menu">Il menu completo</a>
+    </div>
+    <ul class="cucine" role="list">
+      {cucine.map((c) => (
+        <li>
+          <a class="cucina" href={c.link}>
+            <Image src={c.foto} alt={c.alt} widths={[400, 700]} sizes="(max-width: 700px) 78vw, 26vw" quality={75} />
+            <span class="cucina-testo">
+              <span class="cucina-titolo">{c.titolo}</span>
+              <span class="cucina-desc">{c.testo}</span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- Feste ed eventi -->
+  <section class="feste" aria-labelledby="t-feste">
+    <div class="contenitore feste-griglia">
+      <div>
+        <h2 id="t-feste" class="feste-titolo">Comunioni, compleanni, <em>cene di gruppo</em></h2>
+        <p class="feste-lead">
+          L’Arca di Noè è un locale grande: le sale, la veranda e il giardino accolgono comodamente famiglie numerose e
+          gruppi. Il menu della festa lo prepariamo insieme a voi.
         </p>
-        <p>
-          Nella stessa serata si può scegliere tra la pizzeria con il forno a legna, la cucina con i piatti della
-          tradizione calabrese e la griglia per carne e pesce. Così ognuno al tavolo trova quello che preferisce.
-        </p>
-        <p>
-          D’estate si cena in veranda o in giardino, con la vista che arriva fino alla città e alla Catena Costiera;
-          d’inverno nelle sale interne, climatizzate e accessibili. All’ingresso c’è un ampio parcheggio privato.
-        </p>
+        <dl class="spazi">
+          {spazi.map((s) => (
+            <div>
+              <dt>{s.titolo}</dt>
+              <dd>{s.testo}</dd>
+            </div>
+          ))}
+        </dl>
+        <a class="btn btn-chiaro" href="/eventi">Organizza la tua festa</a>
       </div>
-      <figure class="foto-colonna">
-        <Image src={fotoCosenza} alt="Cosenza vista dall’alto al tramonto" widths={[600, 900, 1300]} sizes="(max-width: 900px) 100vw, 50vw" quality={72} />
-        <figcaption>La valle di Cosenza al tramonto</figcaption>
+      <figure class="feste-foto">
+        <Image src={fotoCosenza} alt="La valle di Cosenza al tramonto" widths={[600, 900, 1200]} sizes="(max-width: 900px) 100vw, 45vw" quality={75} />
       </figure>
     </div>
   </section>
 
-  <!-- La cucina -->
-  <section class="sezione sezione-alt">
-    <div class="contenitore">
-      <div class="intestazione-sezione">
-        <h2 class="titolo-sezione">La nostra cucina</h2>
-        <p class="lead">Tre cucine nello stesso menu, con ingredienti del territorio e porzioni generose.</p>
-      </div>
-      <div class="cucine">
-        {cucine.map((c) => (
-          <article class="cucina">
-            <Image src={c.foto} alt={c.alt} widths={[400, 700]} sizes="(max-width: 800px) 100vw, 33vw" quality={72} />
-            <h3>{c.titolo}</h3>
-            <p>{c.testo}</p>
-            <a class="link-freccia" href={c.link}>Vedi nel menu <Icona nome="freccia" /></a>
-          </article>
-        ))}
-      </div>
-      <div class="centro">
-        <a class="btn btn-bordo" href="/menu">Il menu completo</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Sale ed eventi -->
-  <section class="sezione">
-    <div class="contenitore due-colonne allinea-alto">
-      <div class="testo-corrente">
-        <h2 class="titolo-sezione">Spazio per ogni occasione</h2>
-        <p class="lead">
-          Le sale dell’Arca di Noè accolgono comodamente i grandi gruppi: comunioni, battesimi, compleanni, lauree e cene
-          aziendali.
-        </p>
-        <p>
-          Per le feste prepariamo un menu su misura insieme a voi, con pizza, cucina calabrese, griglia o un po’ di tutto.
-          In alcune serate c’è anche la musica dal vivo.
-        </p>
-        <a class="btn btn-pieno" href="/eventi">Organizza un evento</a>
-      </div>
-      <dl class="spazi">
-        {spazi.map((s) => (
-          <div>
-            <dt>{s.titolo}</dt>
-            <dd>{s.testo}</dd>
-          </div>
-        ))}
-      </dl>
-    </div>
-  </section>
-
-  <!-- Orari e dove siamo -->
-  <section class="sezione sezione-alt" aria-labelledby="titolo-orari">
-    <div class="contenitore due-colonne allinea-alto">
+  <!-- Informazioni -->
+  <section class="info sezione" aria-labelledby="t-info">
+    <div class="contenitore info-griglia">
       <div>
-        <h2 id="titolo-orari" class="titolo-sezione">Orari di apertura</h2>
-        <dl class="orari orari-home">
-          {giorni.map((g) => (
-            <div data-giorno={g}>
-              <dt>{locale.orari.find((o) => o.giorno === g)!.nome}</dt>
-              <dd>{orarioGiorno(g)}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
-      <div>
-        <h2 class="titolo-sezione">Come arrivare</h2>
-        <p class="indirizzo">{indirizzoCompleto}</p>
-        <p class="lead">
-          Da Cosenza si sale verso la Sila in direzione Casali del Manco: in pochi minuti si arriva a Trenta. Il parcheggio
-          è all’ingresso del locale.
-        </p>
-        <div class="azioni">
-          <a class="btn btn-pieno" href={mapsDirections} target="_blank" rel="noopener"><Icona nome="pin" /> Apri in Google Maps</a>
-          <a class="btn btn-bordo" href={`tel:${locale.telefonoLink}`}><Icona nome="telefono" /> Chiama</a>
+        <h2 id="t-info" class="titolo-sezione">Vieni a <em>trovarci</em></h2>
+        <p class="info-indirizzo">{indirizzoCompleto}</p>
+        <p class="info-stato" data-stato><span class="stato-punto" aria-hidden="true"></span><span data-stato-testo>Orari</span></p>
+
+        <div class="fisarmonica">
+          <details open>
+            <summary>Orari di apertura</summary>
+            <dl class="orari">
+              {giorni.map((g) => (
+                <div data-giorno={g}>
+                  <dt>{locale.orari.find((o) => o.giorno === g)!.nome}</dt>
+                  <dd>{orarioGiorno(g)}</dd>
+                </div>
+              ))}
+            </dl>
+          </details>
+          <details>
+            <summary>Prenotazioni</summary>
+            <p>
+              Potete prenotare <a href="/prenota">online</a> o chiamando il
+              <a href={`tel:${locale.telefonoLink}`}>{locale.telefono}</a>. Il venerdì e il sabato sera consigliamo di
+              prenotare con qualche giorno di anticipo.
+            </p>
+          </details>
+          <details>
+            <summary>Come arrivare</summary>
+            <p>
+              Da Cosenza si sale verso la Sila in direzione Casali del Manco: in pochi minuti si arriva a Trenta. Il
+              parcheggio privato è all’ingresso del locale.
+            </p>
+            <p><a href={mapsDirections} target="_blank" rel="noopener">Apri le indicazioni in Google Maps</a></p>
+          </details>
+          <details>
+            <summary>Allergie e senza glutine</summary>
+            <p>
+              Su richiesta prepariamo la pizza con impasto senza glutine. Per allergie e intolleranze avvisateci al momento
+              della prenotazione e chiedete al personale: vi indicheremo i piatti adatti.
+            </p>
+          </details>
+          <details>
+            <summary>Gruppi e feste</summary>
+            <p>
+              Per comunioni, compleanni, lauree e cene aziendali prepariamo menu su misura e riserviamo gli spazi.
+              <a href="/eventi">Scopri le sale e chiedi una proposta</a>.
+            </p>
+          </details>
+          <details>
+            <summary>Asporto</summary>
+            <p>Le pizze si possono ordinare da asporto: chiamate il <a href={`tel:${locale.telefonoLink}`}>{locale.telefono}</a>.</p>
+          </details>
+        </div>
+
+        <div class="info-azioni">
+          <a class="btn btn-pieno" href="/prenota">Prenota un tavolo</a>
+          <a class="btn btn-bordo" href={mapsDirections} target="_blank" rel="noopener"><Icona nome="pin" /> Indicazioni</a>
         </div>
       </div>
+      <figure class="info-foto">
+        <Image src={fotoForno} alt="Una pizza nel forno a legna, accanto alla brace" widths={[600, 1000]} sizes="(max-width: 900px) 100vw, 45vw" quality={75} />
+      </figure>
     </div>
   </section>
 </Base>
@@ -198,11 +179,12 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
   /* ---------- Apertura ---------- */
   .apertura {
     position: relative;
-    min-height: min(88svh, 820px);
-    display: flex;
-    align-items: flex-end;
-    color: #fff;
+    min-height: min(100svh, 940px);
+    display: grid;
+    place-items: center;
+    color: var(--bg);
     overflow: hidden;
+    text-align: center;
   }
   .apertura :global(.apertura-foto) {
     position: absolute;
@@ -210,227 +192,355 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 30% 60%;
+    object-position: 35% 60%;
+    animation: avvicina 14s var(--ease) both;
+  }
+  @keyframes avvicina {
+    from {
+      transform: scale(1.08);
+    }
+    to {
+      transform: scale(1);
+    }
   }
   .apertura-velo {
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(180deg, rgba(20, 16, 12, 0.55) 0%, rgba(20, 16, 12, 0) 28%),
-      linear-gradient(0deg, rgba(20, 16, 12, 0.78) 0%, rgba(20, 16, 12, 0.25) 55%, rgba(20, 16, 12, 0.1) 100%);
+      linear-gradient(180deg, rgba(30, 10, 4, 0.55) 0%, rgba(30, 10, 4, 0.15) 30%, rgba(30, 10, 4, 0.25) 60%, rgba(30, 10, 4, 0.7) 100%);
   }
   .apertura-testo {
     position: relative;
-    padding-top: 140px;
-    padding-bottom: clamp(48px, 8vw, 96px);
+    padding: 120px var(--gutter) 80px;
+    display: grid;
+    justify-items: center;
   }
   .apertura h1 {
-    font-size: clamp(2.3rem, 5.4vw, 4.2rem);
-    max-width: 17ch;
-    line-height: 1.08;
+    font-size: clamp(3.4rem, 10vw, 9rem);
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    max-width: 11ch;
   }
-  .apertura-testo > p {
-    margin-top: 1.1rem;
-    font-size: clamp(1.05rem, 1.5vw, 1.25rem);
-    max-width: 52ch;
-    color: rgba(255, 255, 255, 0.9);
+  .apertura h1 em {
+    display: block;
+    color: inherit;
+  }
+  .apertura .etichetta-mini {
+    margin-top: 1.6rem;
+    color: rgba(255, 253, 244, 0.9);
   }
   .apertura-azioni {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 0.75rem;
-    margin-top: 2rem;
+    margin-top: 2.2rem;
   }
   @media (max-width: 560px) {
+    .apertura-azioni {
+      width: 100%;
+    }
     .apertura-azioni .btn {
       flex: 1 1 100%;
     }
   }
 
-  /* ---------- Informazioni pratiche ---------- */
-  .pratiche {
-    border-bottom: 1px solid var(--linea);
+  /* ---------- Benvenuto ---------- */
+  .benvenuto {
+    padding-block: clamp(80px, 12vw, 160px);
+    text-align: center;
   }
-  .pratiche-griglia {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+  .benvenuto-testo {
+    font-family: var(--serif);
+    font-size: clamp(1.9rem, 3.6vw, 3.1rem);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    max-width: 30ch;
+    margin-inline: auto;
   }
-  .pratica {
-    display: flex;
-    gap: 1rem;
-    padding: clamp(1.75rem, 3vw, 2.5rem) clamp(1rem, 2.5vw, 2rem);
-    border-left: 1px solid var(--linea);
-  }
-  .pratica:first-child {
-    border-left: 0;
-    padding-left: 0;
-  }
-  .pratica > :global(svg) {
-    width: 22px;
-    height: 22px;
-    flex: none;
-    margin-top: 0.2rem;
+  .benvenuto-testo em {
     color: var(--accento);
   }
-  .pratica h2 {
-    font-family: var(--sans);
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 0.35rem;
-  }
-  .pratica p {
+  .fatti {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem 1.2rem;
+    list-style: none;
+    margin: 2.6rem 0 0;
+    padding: 0;
     color: var(--ink-2);
   }
-  .pratica-stato {
-    font-weight: 600;
-  }
-  .pratica-stato[data-aperto='true'] {
-    color: var(--aperto);
-  }
-  .pratica-tel {
-    font-family: var(--serif);
-    font-size: 1.5rem;
-    color: var(--ink);
-    text-decoration: none;
-  }
-  .pratica .link-freccia {
-    margin-top: 0.2rem;
-  }
-  @media (max-width: 860px) {
-    .pratiche-griglia {
-      grid-template-columns: 1fr;
-    }
-    .pratica {
-      border-left: 0;
-      border-top: 1px solid var(--linea);
-      padding-inline: 0;
-    }
-    .pratica:first-child {
-      border-top: 0;
-    }
-  }
-
-  /* ---------- Layout comuni ---------- */
-  .due-colonne {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: clamp(2.5rem, 6vw, 5.5rem);
+  .fatti li {
+    display: flex;
     align-items: center;
+    gap: 1.2rem;
   }
-  .allinea-alto {
-    align-items: start;
-  }
-  @media (max-width: 900px) {
-    .due-colonne {
-      grid-template-columns: 1fr;
-    }
-  }
-  .testo-corrente .titolo-sezione {
-    margin-bottom: 1.2rem;
-  }
-  .testo-corrente .lead {
-    margin-bottom: 1.2rem;
-  }
-  .testo-corrente .btn {
-    margin-top: 2rem;
-  }
-  .foto-colonna {
-    margin: 0;
-  }
-  .foto-colonna :global(img) {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-  }
-  .foto-colonna figcaption {
-    margin-top: 0.6rem;
-    font-size: 0.875rem;
-    color: var(--ink-3);
+  .fatti li + li::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accento);
   }
 
-  .intestazione-sezione {
-    text-align: center;
-    display: grid;
-    justify-items: center;
-    gap: 1rem;
-    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+  /* ---------- Cucine ---------- */
+  .cucine-sez {
+    padding-bottom: clamp(80px, 11vw, 150px);
   }
-
-  /* ---------- Cucina ---------- */
+  .cucine-testa {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: clamp(1.8rem, 3vw, 2.8rem);
+  }
   .cucine {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: clamp(1.5rem, 3vw, 2.5rem);
+    grid-auto-flow: column;
+    grid-auto-columns: clamp(250px, 24vw, 340px);
+    gap: clamp(12px, 1.5vw, 20px);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 0 var(--gutter) 0.5rem;
+    scroll-padding-inline: var(--gutter);
+    margin: 0;
+    list-style: none;
+    scrollbar-width: none;
   }
-  .cucina :global(img) {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
+  .cucine::-webkit-scrollbar {
+    display: none;
   }
-  .cucina h3 {
-    font-size: 1.6rem;
-    margin-top: 1.3rem;
-  }
-  .cucina p {
-    margin-top: 0.6rem;
-    color: var(--ink-2);
-  }
-  .cucina .link-freccia {
-    margin-top: 0.5rem;
-  }
-  .centro {
-    display: flex;
-    justify-content: center;
-    margin-top: clamp(2.5rem, 5vw, 3.5rem);
-  }
-  @media (max-width: 800px) {
+  @media (min-width: 1400px) {
     .cucine {
-      grid-template-columns: 1fr;
-      gap: 2.5rem;
+      grid-auto-flow: row;
+      grid-template-columns: repeat(5, 1fr);
+      max-width: var(--max);
+      margin-inline: auto;
     }
   }
+  .cucine li {
+    scroll-snap-align: start;
+  }
+  .cucina {
+    position: relative;
+    display: block;
+    border-radius: var(--raggio-foto);
+    overflow: hidden;
+    aspect-ratio: 3 / 4.3;
+    color: var(--bg);
+    text-decoration: none;
+    isolation: isolate;
+  }
+  .cucina :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    transition: transform 0.8s var(--ease);
+  }
+  .cucina::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, transparent 40%, rgba(30, 10, 4, 0.82));
+  }
+  .cucina:hover :global(img) {
+    transform: scale(1.05);
+  }
+  .cucina-testo {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 1.4rem;
+    display: grid;
+    gap: 0.35rem;
+  }
+  .cucina-titolo {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 2.2rem;
+    line-height: 1;
+  }
+  .cucina-desc {
+    font-size: 0.925rem;
+    color: rgba(255, 253, 244, 0.88);
+  }
 
-  /* ---------- Spazi ---------- */
+  /* ---------- Feste ---------- */
+  .feste {
+    background: var(--accento);
+    color: var(--bg);
+    padding-block: clamp(80px, 11vw, 150px);
+  }
+  .feste-griglia {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(2.5rem, 6vw, 6rem);
+    align-items: center;
+  }
+  .feste-titolo {
+    font-size: clamp(2.8rem, 6vw, 5.2rem);
+    line-height: 0.95;
+  }
+  .feste-titolo em {
+    display: block;
+    color: inherit;
+  }
+  .feste-lead {
+    margin-top: 1.6rem;
+    font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+    color: rgba(255, 253, 244, 0.9);
+    max-width: 52ch;
+  }
   .spazi {
-    margin: 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2rem 2.5rem;
-    padding-top: 0.6rem;
+    gap: 1.6rem 2rem;
+    margin: 2.4rem 0 2.6rem;
   }
   .spazi div {
-    padding-top: 1.2rem;
-    border-top: 1px solid var(--ink);
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 253, 244, 0.35);
   }
   .spazi dt {
     font-family: var(--serif);
-    font-size: 1.3rem;
+    font-size: 1.6rem;
+    line-height: 1.1;
   }
   .spazi dd {
-    margin: 0.4rem 0 0;
-    color: var(--ink-2);
+    margin: 0.35rem 0 0;
+    font-size: 0.95rem;
+    color: rgba(255, 253, 244, 0.82);
   }
-  @media (max-width: 520px) {
+  .feste-foto {
+    margin: 0;
+  }
+  .feste-foto :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 999px 999px var(--raggio-foto) var(--raggio-foto);
+  }
+  @media (max-width: 900px) {
+    .feste-griglia {
+      grid-template-columns: 1fr;
+    }
+    .feste-foto {
+      max-width: 460px;
+    }
+  }
+  @media (max-width: 480px) {
     .spazi {
       grid-template-columns: 1fr;
     }
   }
 
-  /* ---------- Orari e strada ---------- */
-  .orari-home {
-    margin-top: 1.6rem;
-    max-width: 440px;
+  /* ---------- Informazioni ---------- */
+  .info-griglia {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2.5rem, 6vw, 6rem);
+    align-items: start;
   }
-  .indirizzo {
-    margin: 1.6rem 0 0.8rem;
+  .info-indirizzo {
+    margin-top: 1.4rem;
     font-family: var(--serif);
-    font-size: 1.35rem;
-    line-height: 1.35;
+    font-size: 1.6rem;
+    line-height: 1.2;
   }
-  .azioni {
+  .info-stato {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.8rem;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .info-stato .stato-punto {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ink-3);
+  }
+  .info-stato[data-aperto='true'] {
+    color: var(--aperto);
+  }
+  .info-stato[data-aperto='true'] .stato-punto {
+    background: #43a86a;
+  }
+  .fisarmonica {
+    margin-top: 2.2rem;
+    border-top: 1px solid var(--ink);
+  }
+  .fisarmonica details {
+    border-bottom: 1px solid var(--linea);
+  }
+  .fisarmonica summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding-block: 1.1rem;
+    cursor: pointer;
+    list-style: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .fisarmonica summary::-webkit-details-marker {
+    display: none;
+  }
+  .fisarmonica summary::after {
+    content: '+';
+    font-family: var(--serif);
+    font-size: 1.7rem;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--accento);
+    transition: transform 0.25s var(--ease);
+  }
+  .fisarmonica details[open] summary::after {
+    transform: rotate(45deg);
+  }
+  .fisarmonica details > :not(summary) {
+    margin-bottom: 1.2rem;
+    color: var(--ink-2);
+    max-width: 56ch;
+  }
+  .fisarmonica details p + p {
+    margin-top: 0.6rem;
+  }
+  .fisarmonica .orari {
+    max-width: 420px;
+  }
+  .info-azioni {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    margin-top: 1.8rem;
+    margin-top: 2.2rem;
+  }
+  .info-foto {
+    position: sticky;
+    top: 100px;
+    margin: 0;
+  }
+  .info-foto :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--raggio-foto);
+  }
+  @media (max-width: 900px) {
+    .info-griglia {
+      grid-template-columns: 1fr;
+    }
+    .info-foto {
+      display: none;
+    }
   }
 </style>

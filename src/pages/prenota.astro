@@ -10,7 +10,7 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
 <Base titolo="Prenota un tavolo" descrizione={`Prenota un tavolo all’Arca di Noè a Trenta, Casali del Manco: pizzeria, ristorante e griglieria con vista su Cosenza. Chiama il ${locale.telefono}.`} senzaBarra>
   <div class="contenitore pagina">
     <div>
-      <h1>Prenota un tavolo</h1>
+      <h1>Prenota un <em>tavolo</em></h1>
       <p class="lead">
         Indicate giorno, orario e numero di persone: vi confermeremo la prenotazione il prima possibile. Per gruppi numerosi
         e feste visitate la pagina <a href="/eventi">Sale ed eventi</a>.
@@ -55,7 +55,8 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
     }
   }
   h1 {
-    font-size: clamp(2.4rem, 5vw, 3.4rem);
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    line-height: 0.95;
     margin-bottom: 1rem;
   }
   .modulo {
@@ -68,6 +69,7 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
     gap: 1.25rem;
   }
   .riquadro {
+    border-radius: var(--raggio-foto);
     padding: clamp(1.5rem, 3vw, 2rem);
     background: var(--bg-alt);
   }
@@ -82,7 +84,7 @@ const giorni = [1, 2, 3, 4, 5, 6, 0];
     align-items: center;
     gap: 0.6rem;
     font-family: var(--serif);
-    font-size: 1.8rem;
+    font-size: 2.4rem;
     text-decoration: none;
   }
   .telefono :global(svg) {

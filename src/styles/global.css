@@ -1,31 +1,32 @@
-@import '@fontsource/libre-caslon-text/400.css';
-@import '@fontsource/libre-caslon-text/400-italic.css';
-@import '@fontsource/libre-caslon-text/700.css';
+@import '@fontsource/instrument-serif/400.css';
+@import '@fontsource/instrument-serif/400-italic.css';
 @import '@fontsource-variable/figtree/wght.css';
 
 :root {
-  --bg: #ffffff;
-  --bg-alt: #f5f2ec;
-  --bg-scuro: #1e2a22;
+  /* Crema, marrone e rosso: carta da trattoria, legno, pomodoro */
+  --bg: #fffdf4;
+  --bg-alt: #f6eedb;
+  --bg-scuro: #321108;
 
-  --ink: #1d1c1a;
-  --ink-2: #4f4b45;
-  --ink-3: #7a746b;
-  --linea: #e4dfd6;
+  --ink: #321108;
+  --ink-2: #5e4136;
+  --ink-3: #8a7065;
+  --linea: #e6dac2;
 
-  /* Verde scuro: il bosco della Sila. Unico colore d'accento. */
-  --accento: #2f4a3a;
-  --accento-hover: #243a2d;
-  --accento-chiaro: #e7ede8;
+  /* Rosso Calabria: il colore firma */
+  --accento: #b3261e;
+  --accento-hover: #921d16;
+  --accento-chiaro: #f6dcd6;
 
   --aperto: #2e7d4f;
 
-  --serif: 'Libre Caslon Text', Georgia, serif;
+  --serif: 'Instrument Serif', Georgia, serif;
   --sans: 'Figtree Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  --gutter: clamp(20px, 4vw, 48px);
-  --max: 1180px;
-  --raggio: 4px;
+  --gutter: clamp(20px, 4vw, 56px);
+  --max: 1240px;
+  --raggio: 999px;
+  --raggio-foto: clamp(16px, 2vw, 28px);
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 
   color-scheme: light;
@@ -67,13 +68,20 @@ img {
   height: auto;
 }
 
+h1 em,
+h2 em,
+h3 em,
+p em {
+  font-style: italic;
+}
+
 h1,
 h2,
 h3 {
   font-family: var(--serif);
   font-weight: 400;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
   margin: 0;
   text-wrap: balance;
 }
@@ -125,14 +133,15 @@ a:hover {
   align-items: center;
   justify-content: center;
   gap: 0.5em;
-  min-height: 48px;
-  padding: 0 1.5em;
+  min-height: 50px;
+  padding: 0 1.7em;
   border-radius: var(--raggio);
   border: 1px solid transparent;
   font-family: var(--sans);
-  font-size: 0.975rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
@@ -170,7 +179,7 @@ a:hover {
 
 /* Varianti su foto o fondo scuro */
 .btn-chiaro {
-  background: #fff;
+  background: var(--bg);
   color: var(--ink);
 }
 
@@ -200,7 +209,21 @@ a:hover {
 }
 
 .titolo-sezione {
-  font-size: clamp(2rem, 4vw, 2.9rem);
+  font-size: clamp(2.6rem, 5.5vw, 4.4rem);
+}
+
+h1 em,
+.titolo-sezione em {
+  color: var(--accento);
+}
+
+/* Etichetta piccola in maiuscolo spaziato, come nelle insegne e nei biglietti da visita */
+.etichetta-mini {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .lead {
@@ -293,8 +316,8 @@ textarea {
   font-size: 1rem;
   color: var(--ink);
   background: #fff;
-  border: 1px solid #cfc8bc;
-  border-radius: var(--raggio);
+  border: 1px solid #d9c9ad;
+  border-radius: 10px;
   min-height: 48px;
   padding: 0.65rem 0.85rem;
   width: 100%;
@@ -327,7 +350,7 @@ textarea:focus {
 
 select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%231d1c1a' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23321108' stroke-width='1.5'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.9rem center;
   padding-right: 2.4rem;

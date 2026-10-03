@@ -10,7 +10,7 @@ import { menu, etichette, euro } from '../data/menu';
 >
   <header class="testa">
     <div class="contenitore">
-      <h1>Menu</h1>
+      <h1>Il <em>menu</em></h1>
       <p class="lead">
         Pizze dal forno a legna, cucina calabrese e griglia. Per allergie e intolleranze chiedete pure al personale: vi
         indicheremo i piatti adatti.
@@ -148,7 +148,8 @@ import { menu, etichette, euro } from '../data/menu';
     text-align: center;
   }
   .testa h1 {
-    font-size: clamp(2.6rem, 6vw, 4rem);
+    font-size: clamp(3.4rem, 9vw, 7rem);
+    line-height: 0.95;
     margin-bottom: 1rem;
   }
   .testa .lead {
@@ -294,7 +295,9 @@ import { menu, etichette, euro } from '../data/menu';
     scroll-margin-top: 170px;
   }
   .categoria h2 {
-    font-size: clamp(1.8rem, 3vw, 2.2rem);
+    font-size: clamp(2.4rem, 4vw, 3.2rem);
+    font-style: italic;
+    color: var(--accento);
     padding-bottom: 0.8rem;
     border-bottom: 1px solid var(--ink);
   }
@@ -383,6 +386,7 @@ import { menu, etichette, euro } from '../data/menu';
   }
 
   .cta {
+    border-radius: var(--raggio-foto);
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -393,7 +397,7 @@ import { menu, etichette, euro } from '../data/menu';
     background: var(--bg-alt);
   }
   .cta h2 {
-    font-size: 1.7rem;
+    font-size: 2.4rem;
   }
   .cta p {
     margin-top: 0.4rem;

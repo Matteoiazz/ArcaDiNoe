@@ -27,7 +27,7 @@ const servizi = [
   <header class="testa">
     <div class="contenitore due-colonne">
       <div>
-        <h1>Sale ed eventi</h1>
+        <h1>Sale ed <em>eventi</em></h1>
         <p class="lead">
           L’Arca di Noè è un locale grande: sale interne, veranda e giardino possono accogliere famiglie numerose e
           gruppi, per una festa o una cena di lavoro.
@@ -44,7 +44,7 @@ const servizi = [
 
   <section class="sezione sezione-alt" aria-labelledby="t-occasioni">
     <div class="contenitore">
-      <h2 id="t-occasioni" class="titolo-sezione">Le occasioni</h2>
+      <h2 id="t-occasioni" class="titolo-sezione">Le <em>occasioni</em></h2>
       <div class="occasioni">
         {occasioni.map((o) => (
           <div>
@@ -59,13 +59,13 @@ const servizi = [
   <section class="sezione">
     <div class="contenitore due-colonne allinea-alto">
       <div>
-        <h2 class="titolo-sezione">Cosa offriamo</h2>
+        <h2 class="titolo-sezione">Cosa <em>offriamo</em></h2>
         <ul class="servizi">
           {servizi.map((s) => <li>{s}</li>)}
         </ul>
       </div>
       <div id="richiesta" class="richiesta-box">
-        <h2 class="titolo-sezione">Richiedi una proposta</h2>
+        <h2 class="titolo-sezione">Richiedi una <em>proposta</em></h2>
         <p class="lead">Oppure chiamate il <a href={`tel:${locale.telefonoLink}`}>{locale.telefono}</a>.</p>
         <div class="modulo">
           <Richiesta tipo="evento" />
@@ -94,7 +94,8 @@ const servizi = [
     }
   }
   h1 {
-    font-size: clamp(2.4rem, 5vw, 3.4rem);
+    font-size: clamp(3rem, 7vw, 6rem);
+    line-height: 0.95;
     margin-bottom: 1.1rem;
   }
   .testo {
@@ -107,8 +108,9 @@ const servizi = [
   }
   .testa :global(img) {
     width: 100%;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 4 / 5;
     object-fit: cover;
+    border-radius: 999px 999px var(--raggio-foto) var(--raggio-foto);
   }
 
   .occasioni {
@@ -122,7 +124,8 @@ const servizi = [
     border-top: 1px solid var(--ink);
   }
   .occasioni h3 {
-    font-size: 1.35rem;
+    font-size: 2rem;
+    font-style: italic;
   }
   .occasioni p {
     margin-top: 0.5rem;
